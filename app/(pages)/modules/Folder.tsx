@@ -5,11 +5,13 @@ import { FaFolder } from "react-icons/fa";
 interface FolderProps {
   onClick?: () => void;
   onDoubleClick?: () => void;
+  name?: string;
 }
 
 const Folder: React.FC<FolderProps> = ({
   onClick,
   onDoubleClick,
+  name = "Folder Name",
 }) => {
 
   // クリックタイマーのIDを保持するref。nullまたはnumber型。
@@ -45,7 +47,7 @@ const Folder: React.FC<FolderProps> = ({
         <div className="relative m-4 cursor-pointer flex flex-col justify-center items-center"
              onClick={handleClick}>
             <FaFolder color="white" size={80}/>
-            <div className="text-white ">Folder Name</div>
+            <div className="text-white ">{name}</div>
         </div>
     )
 }
