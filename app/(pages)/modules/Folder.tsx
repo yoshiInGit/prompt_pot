@@ -44,10 +44,10 @@ const Folder: React.FC<FolderProps> = ({
   };
 
     return (
-        <div className="relative m-4 cursor-pointer flex flex-col justify-center items-center"
+        <div className="w-1/8 relative cursor-pointer flex flex-col justify-center items-center"
              onClick={handleClick}>
-            <FaFolder color="white" size={80}/>
-            <div className="text-white ">{name}</div>
+            <FaFolder color="#797979" size={80}/>
+            <div className="text-gray-700 ">{name}</div>
         </div>
     )
 }
