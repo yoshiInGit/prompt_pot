@@ -3,8 +3,11 @@
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
 import { GoCpu } from "react-icons/go";
+import { FaCopy } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
+import PrevHighlightCard from "./modules/PrevHighlightCard";
 
 const Editor = () => {
     return(
@@ -66,7 +69,19 @@ const Editor = () => {
 
             {/* プレビュー画面 */}
             <div className="w-4/10 h-full overflow-hidden flex flex-col">
-                <div className="flex-grow bg-white shadow-md p-2 rounded flex flex-col">
+                <div className="flex-grow bg-white shadow-md p-4 rounded flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="text-gray-600 font-bold">Preview</div>
+                            <div className="grow"/>
+                            <FaCopy size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
+                            <IoMdDownload size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
+                        </div>
+
+                        <PrevHighlightCard />
+
+                        <div className="grow w-full">
+                            
+                        </div>
                 </div>
             </div>
         </div>
