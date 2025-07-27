@@ -2,6 +2,7 @@
 
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
+import { GoCpu } from "react-icons/go";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
 
@@ -14,7 +15,16 @@ const Editor = () => {
                 {/* プロンプトエリア */}
                 <div className="w-full h-1/2 overflow-hidden flex">
                     {/* ベースプロンプト */}
-                    <div className="w-5/10 h-full bg-white shadow-md p-2 rounded">
+                    <div className="w-5/10 h-full bg-white shadow-md p-4 rounded flex flex-col">
+                        <div className="flex items-center mb-2">
+                            <GoCpu size={16}/>
+                            <div className="text-gray-600 ml-2">Base Prompt</div>
+                        </div>
+
+                        <textarea 
+                                className="flex-1 bg-white border text-sm border-white focus:border-white focus:outline-none resize-none rounded"
+                                placeholder="このTextAreaはflexコンテナ内で最大限大きくなります..."
+                        ></textarea>
 
                     </div>
                     {/* アディクションプロンプロ */}
