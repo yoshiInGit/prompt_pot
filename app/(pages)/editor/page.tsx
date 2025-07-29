@@ -1,6 +1,7 @@
 'use client';
 
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { IoReturnUpBack } from "react-icons/io5";
 import { VscPreview } from "react-icons/vsc";
 import { GoCpu } from "react-icons/go";
 import { FaCopy } from "react-icons/fa";
@@ -8,8 +9,16 @@ import { IoMdDownload } from "react-icons/io";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
+import { useState } from "react";
+import { File, Folder } from "@/app/models/directory";
 
 const Editor = () => {
+
+    // リソースリスト
+    const [isNested, setIsNested] = useState(false);
+    const [resourceFolders, setResourceFolders] = useState<Folder[]>([]);
+    const [resourceFiles, setResourceFiles] = useState<File[]>([])
+
     return(
         <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
             
@@ -49,11 +58,26 @@ const Editor = () => {
                 <div className="w-full h-1/2 overflow-hidden flex p-2">
                     {/* リソースリスト */}
                     <div className="w-2/3 flex flex-col pr-2">
-                        <ResourceTile/>
-                        <ResourceTile/>
-                        <ResourceTile/>
-                        <ResourceTile
-                            type="file"/>
+                        <div className="w-full">
+                            {isNested && <IoReturnUpBack size={32}  className="cursor-pointer hover:bg-gray-300 p-1"/>}
+                        </div>
+                        { resourceFolders.map((folder) => (
+                            <ResourceTile
+                                key={folder.id}
+                                type="folder"
+                                name={folder.name}
+                                />
+                            ))
+                         }
+
+                         { resourceFiles.map((file) => (
+                            <ResourceTile
+                                key={file.id}
+                                type="file"
+                                name={file.name}
+                                />
+                            ))
+                         }
 
                     </div>
 
