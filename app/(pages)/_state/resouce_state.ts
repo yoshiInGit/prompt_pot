@@ -1,7 +1,7 @@
 import { Folder, File } from "@/app/models/directory";
 
 // 現在表紙しているリソース欄の状態を管理するシングルトン
-type OnChange  = ({isNested, folders, files}:{isNested:boolean, folders:Folder[], files:File[]})=>void
+type OnChange  = ({currentFolderId, folders, files}:{currentFolderId:string|null, folders:Folder[], files:File[]})=>void
 
 class ResourceState {
   private static instance: ResourceState;
@@ -31,9 +31,9 @@ class ResourceState {
     throw new Error('Cannot clone singleton instance');
   }
   
-  private isNested : boolean = false; // 現在表示しているリソース欄が何かのフォルダの中にあるかどうか。（上位のフォルダに戻れるか）
-  private folders: Folder[] = [];
-  private files : File[] = [];
+  public currentFolderId : string|null = null; // 現在表示しているリソース欄が何かのフォルダの中にあるかどうか。（上位のフォルダに戻れるか）
+  public folders: Folder[] = [];
+  public files : File[] = [];
 
   private subscribers : OnChange[] = []
 
@@ -46,7 +46,7 @@ class ResourceState {
   }
 
   public notify = () => {
-    this.subscribers.forEach(sub => sub({isNested:this.isNested, folders:this.folders, files:this.files}));
+    this.subscribers.forEach(sub => sub({currentFolderId:this.currentFolderId, folders:this.folders, files:this.files}));
   }
 
 }
