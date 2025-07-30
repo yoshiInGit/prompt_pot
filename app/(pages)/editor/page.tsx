@@ -9,15 +9,51 @@ import { IoMdDownload } from "react-icons/io";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { File, Folder } from "@/app/models/directory";
+import ResourceState from "../_state/resouce_state";
+import { AiFillFileAdd } from "react-icons/ai";
+import { AiFillFolderAdd } from "react-icons/ai";
+import NewFolderDialog from "./modules/NewFolderDialog";
+import LoadingSpinner from "../_common/Loading_spinner";
+import LoadingState from "../_state/loading_state";
+import { addFolder } from "../_action/resouce";
 
 const Editor = () => {
 
     // リソースリスト
-    const [isNested, setIsNested] = useState(false);
+    const [currentFolderId, setCurrentFolderId] = useState<string|null>(null);
     const [resourceFolders, setResourceFolders] = useState<Folder[]>([]);
     const [resourceFiles, setResourceFiles] = useState<File[]>([])
+
+    const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
+    const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string|null, folders: Folder[], files: File[]}) => {
+            setCurrentFolderId(currentFolderId);
+            setResourceFolders(folders);
+            setResourceFiles(files);
+        }
+
+        const updateResourceListLoading = ({isLoading}: {isLoading: boolean}) => {
+            setIsResourceListLoading(isLoading);
+        }
+
+        // ResourceStateのインスタンスを取得
+        const resourceState = ResourceState.getInstance();
+        resourceState.subscribe(updateResource);
+
+        // LoadingStateのインスタンスを取得
+        const loadingState = LoadingState.getInstance();
+        loadingState.subscribeResourceList(updateResourceListLoading);
+
+        return () => {
+            // クリーンアップ時にサブスクライブを解除
+            resourceState.unsubscribe(updateResource);
+            loadingState.unsubscribeResourceList(updateResourceListLoading);
+        } 
+    }, []);
 
     return(
         <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
@@ -55,12 +91,17 @@ const Editor = () => {
                 </div>
 
                 {/* リソースエリア */}
-                <div className="w-full h-1/2 overflow-hidden flex p-2">
+                <div className="w-full h-1/2 overflow-hidden flex pr-2 pt-2">
                     {/* リソースリスト */}
-                    <div className="w-2/3 flex flex-col pr-2">
-                        <div className="w-full">
-                            {isNested && <IoReturnUpBack size={32}  className="cursor-pointer hover:bg-gray-300 p-1"/>}
+                    <div className="relative w-2/3 flex flex-col pr-2">
+                        <div className="w-full flex">
+                            {currentFolderId && <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>}
+                            <div className="grow"/>
+                            <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                            <AiFillFolderAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                onClick={()=>{setNewFolderDialogOpen(true)}}/>
                         </div>
+
                         { resourceFolders.map((folder) => (
                             <ResourceTile
                                 key={folder.id}
@@ -69,7 +110,6 @@ const Editor = () => {
                                 />
                             ))
                          }
-
                          { resourceFiles.map((file) => (
                             <ResourceTile
                                 key={file.id}
@@ -79,10 +119,17 @@ const Editor = () => {
                             ))
                          }
 
+                         <NewFolderDialog 
+                            isOpen={newFolderDialogOpen} 
+                            onClose={()=>{setNewFolderDialogOpen(false)} } 
+                            onCreate={(folderName)=>{addFolder({currentFolderId:currentFolderId, name:folderName});setNewFolderDialogOpen(false)}}/>
+
+                        { isResourceListLoading && <LoadingSpinner />}
+
                     </div>
 
                     {/* リソースプレビュー */}
-                    <div className="w-3/5 h-full bg-white shadow flex flex-col p-2 rounded">
+                    <div className="w-3/5 h-full bg-white shadow flex flex-col rounded">
                         <div className="flex items-center mb-2">
                             <VscPreview size={16}/>
                             <div className="text-gray-600 ml-2">Resource Preview</div>
