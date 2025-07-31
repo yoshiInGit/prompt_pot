@@ -18,7 +18,7 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFolder, restoreFolder } from "../../action_state/_action/resouce";
+import { addFolder, openFolder, restoreFolder } from "../../action_state/_action/resouce";
 
 const Editor = () => {
     // データの復元
@@ -39,6 +39,7 @@ const Editor = () => {
     const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
     const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null); 
+    const [resourceFolderHistory, setResourceFolderHistory] = useState<string[]>(["base"]);
 
     useEffect(() => {
         const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string, folders: Folder[], files: File[]}) => {
@@ -107,7 +108,13 @@ const Editor = () => {
                     <div className="relative w-2/3 flex flex-col pr-2">
                         {/* ヘッダー */}
                         <div className="w-full flex">
-                            {currentFolderId!="base" && <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>}
+                            {currentFolderId!="base" && 
+                                <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                onClick={()=>{
+                                    const prevFolderId = resourceFolderHistory[resourceFolderHistory.length - 2];
+                                    openFolder({folderId: prevFolderId});
+                                    setResourceFolderHistory(resourceFolderHistory.slice(0, -1));
+                                }}/>}
                             <div className="grow"/>
                             {selectedResourceId && (
                                 <>
@@ -128,6 +135,11 @@ const Editor = () => {
                                 isSelected={selectedResourceId === folder.id}
                                 onClick={() => {
                                     setSelectedResourceId(folder.id);
+                                }}
+                                onDoubleClick={()=>{
+                                    openFolder({folderId : folder.id});
+                                    setResourceFolderHistory([...resourceFolderHistory, folder.id]);
+                                    setSelectedResourceId(null);
                                 }}
                                 />
                             ))

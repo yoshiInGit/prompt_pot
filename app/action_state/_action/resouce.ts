@@ -20,6 +20,29 @@ export const restoreFolder = async () => {
     LoadingState.getInstance().notifyResourceListSub();
 }
 
+export const openFolder = async ({folderId}:{folderId:string}) => {
+    const resourceState = ResourceState.getInstance();
+
+    resourceState.folders = [];
+    resourceState.files = [];
+    resourceState.notify();
+
+    LoadingState.getInstance().isResourceListLoading = true;
+    LoadingState.getInstance().notifyResourceListSub();
+
+    const folders = await getFoldersByParentId(folderId);
+    // TODO ファイルも取得する
+
+    resourceState.currentFolderId = folderId; // フォルダを復元する場合は、ベースフォルダに戻す
+    resourceState.folders = folders;
+    resourceState.notify();
+    
+
+    LoadingState.getInstance().isResourceListLoading = false;
+    LoadingState.getInstance().notifyResourceListSub();
+
+}
+
 export const addFolder = async ({currentFolderId, name}:{currentFolderId:string, name:string}) =>{
     LoadingState.getInstance().isResourceListLoading = true;
     LoadingState.getInstance().notifyResourceListSub();
