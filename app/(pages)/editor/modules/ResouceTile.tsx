@@ -6,15 +6,17 @@ interface ResourceTileCardProps {
   type?: "folder" | "file";
   onClick?: () => void;
   name?: string;
+  isSelected?: boolean;
 }
 
 const ResourceTile : React.FC<ResourceTileCardProps> = ({
     type = "folder",
     onClick = () => {},
     name = "Resource Name",
+    isSelected = false,
 }) => {
     return (
-        <div className="w-full flex items-center border-b-gray-400 border-b-1 px-2 py-3 cursor-pointer hover:bg-gray-100"
+        <div className={`"w-full flex items-center border-b-gray-400 border-b-1 px-2 py-3 cursor-pointer hover:bg-gray-100" ${isSelected ? "bg-gray-100" : ""}`}
             onClick={onClick}>
             {type === "file" ? (
                 <FaFile size={24} color="gray" className="mr-2"/>

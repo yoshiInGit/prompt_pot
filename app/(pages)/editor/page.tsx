@@ -1,11 +1,12 @@
 'use client';
 
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { MdDelete, MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { IoReturnUpBack } from "react-icons/io5";
 import { VscPreview } from "react-icons/vsc";
 import { GoCpu } from "react-icons/go";
 import { FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
+import { BiSolidRename } from "react-icons/bi";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
@@ -37,6 +38,7 @@ const Editor = () => {
 
     const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
+    const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null); 
 
     useEffect(() => {
         const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string, folders: Folder[], files: File[]}) => {
@@ -103,9 +105,16 @@ const Editor = () => {
                 <div className="w-full h-1/2 overflow-hidden flex pr-2 pt-2">
                     {/* リソースリスト */}
                     <div className="relative w-2/3 flex flex-col pr-2">
+                        {/* ヘッダー */}
                         <div className="w-full flex">
                             {currentFolderId!="base" && <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>}
                             <div className="grow"/>
+                            {selectedResourceId && (
+                                <>
+                                <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                                <MdDelete size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                                </>
+                            )}
                             <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
                             <AiFillFolderAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
                                 onClick={()=>{setNewFolderDialogOpen(true)}}/>
@@ -116,6 +125,10 @@ const Editor = () => {
                                 key={folder.id}
                                 type="folder"
                                 name={folder.name}
+                                isSelected={selectedResourceId === folder.id}
+                                onClick={() => {
+                                    setSelectedResourceId(folder.id);
+                                }}
                                 />
                             ))
                          }
@@ -124,6 +137,7 @@ const Editor = () => {
                                 key={file.id}
                                 type="file"
                                 name={file.name}
+                                isSelected={selectedResourceId === file.id}
                                 />
                             ))
                          }
