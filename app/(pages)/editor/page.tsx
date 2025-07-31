@@ -9,7 +9,7 @@ import { IoMdDownload } from "react-icons/io";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
 import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { File, Folder } from "@/app/models/directory";
 import ResourceState from "../../action_state/_state/resouce_state";
 import { AiFillFileAdd } from "react-icons/ai";
@@ -17,9 +17,18 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFolder } from "../../action_state/_action/resouce";
+import { addFolder, restoreFolder } from "../../action_state/_action/resouce";
 
 const Editor = () => {
+    // データの復元
+    const initFlag = useRef<boolean>(true);
+    useEffect(() => {
+        if(initFlag.current){
+            // リソースの復元
+            restoreFolder();
+            initFlag.current = false;
+        }
+    }, []);
 
     // リソースリスト
     const [currentFolderId, setCurrentFolderId] = useState<string>("base");
@@ -95,7 +104,7 @@ const Editor = () => {
                     {/* リソースリスト */}
                     <div className="relative w-2/3 flex flex-col pr-2">
                         <div className="w-full flex">
-                            {currentFolderId && <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>}
+                            {currentFolderId!="base" && <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>}
                             <div className="grow"/>
                             <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
                             <AiFillFolderAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
