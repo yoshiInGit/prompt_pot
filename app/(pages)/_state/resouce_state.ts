@@ -1,7 +1,7 @@
 import { Folder, File } from "@/app/models/directory";
 
 // 現在表紙しているリソース欄の状態を管理するシングルトン
-type OnChange  = ({currentFolderId, folders, files}:{currentFolderId:string|null, folders:Folder[], files:File[]})=>void
+type OnChange  = ({currentFolderId, folders, files}:{currentFolderId:string, folders:Folder[], files:File[]})=>void
 
 class ResourceState {
   private static instance: ResourceState;
@@ -31,7 +31,7 @@ class ResourceState {
     throw new Error('Cannot clone singleton instance');
   }
   
-  public currentFolderId : string|null = null; // 現在表示しているリソース欄が何かのフォルダの中にあるかどうか。（上位のフォルダに戻れるか）
+  public currentFolderId : string = "base"; // 現在表示しているリソース欄が何かのフォルダの中にあるかどうか。（上位のフォルダに戻れるか）
   public folders: Folder[] = [];
   public files : File[] = [];
 

@@ -3,7 +3,7 @@ import ResourceState from '../_state/resouce_state';
 import { addResourceFolder } from '@/app/repository/resources';
 import LoadingState from '../_state/loading_state';
 
-export const addFolder = async ({currentFolderId, name}:{currentFolderId:string | null, name:string}) =>{
+export const addFolder = async ({currentFolderId, name}:{currentFolderId:string, name:string}) =>{
     LoadingState.getInstance().isResourceListLoading = true;
     LoadingState.getInstance().notifyResourceListSub();
     
@@ -13,7 +13,7 @@ export const addFolder = async ({currentFolderId, name}:{currentFolderId:string 
     };
 
     // データベース更新 
-    await addResourceFolder(newFolder);
+    await addResourceFolder({folder: newFolder, currentFolderId: currentFolderId});
 
     //　ステート更新
     const resourceState = ResourceState.getInstance();

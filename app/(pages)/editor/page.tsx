@@ -22,7 +22,7 @@ import { addFolder } from "../_action/resouce";
 const Editor = () => {
 
     // リソースリスト
-    const [currentFolderId, setCurrentFolderId] = useState<string|null>(null);
+    const [currentFolderId, setCurrentFolderId] = useState<string>("base");
     const [resourceFolders, setResourceFolders] = useState<Folder[]>([]);
     const [resourceFiles, setResourceFiles] = useState<File[]>([])
 
@@ -30,7 +30,7 @@ const Editor = () => {
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string|null, folders: Folder[], files: File[]}) => {
+        const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string, folders: Folder[], files: File[]}) => {
             setCurrentFolderId(currentFolderId);
             setResourceFolders(folders);
             setResourceFiles(files);
