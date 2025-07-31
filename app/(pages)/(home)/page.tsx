@@ -1,12 +1,10 @@
 'use client';
 
-import { Audiowide } from "next/font/google";
-import Folder from "./modules/Folder";
-import File from "./modules/File";
 import React from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
-
+import Folder from "./modules/Folder";
+import File from "./modules/File";
 
 export default function Home() {
 

@@ -11,13 +11,13 @@ import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
 import { useEffect, useState } from "react";
 import { File, Folder } from "@/app/models/directory";
-import ResourceState from "../_state/resouce_state";
+import ResourceState from "../../action_state/_state/resouce_state";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
-import LoadingState from "../_state/loading_state";
-import { addFolder } from "../_action/resouce";
+import LoadingState from "../../action_state/_state/loading_state";
+import { addFolder } from "../../action_state/_action/resouce";
 
 const Editor = () => {
 
