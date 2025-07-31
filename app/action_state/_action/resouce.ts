@@ -1,13 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
-import ResourceState from '../_state/resouce_state';
 import { addResourceFolder } from '@/app/repository/resources';
+import { Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
+import ResourceState from '../_state/resouce_state';
 
 export const addFolder = async ({currentFolderId, name}:{currentFolderId:string, name:string}) =>{
     LoadingState.getInstance().isResourceListLoading = true;
     LoadingState.getInstance().notifyResourceListSub();
     
-    const newFolder = {
+    const newFolder : Folder = {
         id: uuidv4(),
         name: name 
     };
