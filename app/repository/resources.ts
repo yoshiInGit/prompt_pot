@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, runTransaction} from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteField, doc, getDoc, runTransaction, updateDoc} from "firebase/firestore";
 import { Folder } from "../models/directory";
 import { db } from "../firebase";
 
@@ -75,5 +75,45 @@ export const getFoldersByParentId = async (parentId: string): Promise<Folder[]> 
     } catch (error) {
         console.error("フォルダの取得に失敗しました:", error);
         throw new Error("フォルダの取得に失敗しました。もう一度お試しください。");
+    }
+}
+
+export const updateResourceName = async ({folderId, name}:{folderId : string, name : string}) => {
+    try {
+        const folderDocRef = doc(db, "base", "resources");
+
+        await updateDoc(folderDocRef, {
+            [`id2name.${folderId}`]: name
+        });
+        
+        console.log(`リソース名の更新に成功しました: ${folderId} -> ${name}`);
+    } catch (error) {
+        console.error("フォルダ名の更新に失敗しました:", error);
+        throw new Error("フォルダ名の更新に失敗しました。もう一度お試しください。");
+    }
+}
+
+export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) => {
+    try {
+        const folderDocRef = doc(db, "base", "resources", "folders", folderId);
+        const parentFolderDocRef = doc(db, "base", "resources", "folders", parentFolderId);
+        const resourceDocRef = doc(db, "base", "resources");
+        
+        await runTransaction(db, async (transaction) => {
+            // フォルダを削除
+            transaction.delete(folderDocRef);
+            // 親フォルダからフォルダIDを削除
+            transaction.update(parentFolderDocRef, {
+                folders: arrayRemove(folderId)
+            });
+            transaction.update(resourceDocRef, {
+                [`id2name.${folderId}`]: deleteField() // id2name からも削除
+            });
+
+        });
+        console.log(`フォルダの削除に成功しました: ${folderId}`);
+    }catch (error) {
+        console.error("フォルダの削除に失敗しました:", error);
+        throw new Error("フォルダの削除に失敗しました。もう一度お試しください。");
     }
 }

@@ -1,8 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId } from '@/app/repository/resources';
+import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder} from '@/app/repository/resources';
 import { Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
+
+export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
+    LoadingState.getInstance().isResourceListLoading = true;
+    LoadingState.getInstance().notifyResourceListSub();
+
+    await updateResourceName({folderId: resource, name: name});
+
+    // ステート更新
+    const resourceState = ResourceState.getInstance();
+    const folderIndex = resourceState.folders.findIndex(folder => folder.id === resource);
+    if (folderIndex !== -1) {
+        resourceState.folders[folderIndex].name = name; // フォルダ名を更新
+        resourceState.notify();
+    }
+    
+    LoadingState.getInstance().isResourceListLoading = false;
+    LoadingState.getInstance().notifyResourceListSub();    
+}
 
 export const restoreFolder = async () => {
     LoadingState.getInstance().isResourceListLoading = true;
@@ -67,10 +85,20 @@ export const addFolder = async ({currentFolderId, name}:{currentFolderId:string,
 
 }
 
-export const changeFolderName = () =>{
-}
+export const removeFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) =>{
+    LoadingState.getInstance().isResourceListLoading = true;
+    LoadingState.getInstance().notifyResourceListSub();
 
-export const removeFolder = () =>{
+    //DB処理
+    await deleteFolder({folderId:folderId, parentFolderId:parentFolderId});
+
+    //ステート更新
+    const resourceState = ResourceState.getInstance();
+    resourceState.folders = resourceState.folders.filter(folder => folder.id !== folderId);
+    resourceState.notify();
+
+    LoadingState.getInstance().isResourceListLoading = false;
+    LoadingState.getInstance().notifyResourceListSub();
 }
 
 export const addFile = () =>{

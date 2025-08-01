@@ -18,7 +18,9 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFolder, openFolder, restoreFolder } from "../../action_state/_action/resouce";
+import { addFolder, changeResourceName, openFolder, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
+import RenameDialog from "./modules/RenameFolderDialog";
+import ConfirmDialog from "./modules/ConifrmDialog";
 
 const Editor = () => {
     // データの復元
@@ -37,9 +39,17 @@ const Editor = () => {
     const [resourceFiles, setResourceFiles] = useState<File[]>([])
 
     const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
+    const [renameFOlderDialogOpen, setRenameFolderDialogOpen] = useState<boolean>(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
+    
     const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null); 
+    const [selectedResourceType, setSelectedResourceType] = useState<"folder" | "file" | null>(null);
     const [resourceFolderHistory, setResourceFolderHistory] = useState<string[]>(["base"]);
+    const selectResource = ({id, type}:{id:string|null, type:"folder" | "file" | null}) => {
+        setSelectedResourceId(id);
+        setSelectedResourceType(type);
+    }
 
     useEffect(() => {
         const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string, folders: Folder[], files: File[]}) => {
@@ -118,8 +128,10 @@ const Editor = () => {
                             <div className="grow"/>
                             {selectedResourceId && (
                                 <>
-                                <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
-                                <MdDelete size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                                <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                    onClick={()=>{setRenameFolderDialogOpen(true)}}/>
+                                <MdDelete size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                    onClick={()=>{setDeleteDialogOpen(true)}}/>
                                 </>
                             )}
                             <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
@@ -134,12 +146,12 @@ const Editor = () => {
                                 name={folder.name}
                                 isSelected={selectedResourceId === folder.id}
                                 onClick={() => {
-                                    setSelectedResourceId(folder.id);
+                                    selectResource({id: folder.id, type: "folder"});
                                 }}
                                 onDoubleClick={()=>{
                                     openFolder({folderId : folder.id});
                                     setResourceFolderHistory([...resourceFolderHistory, folder.id]);
-                                    setSelectedResourceId(null);
+                                    selectResource({id: null, type: null})
                                 }}
                                 />
                             ))
@@ -157,7 +169,30 @@ const Editor = () => {
                          <NewFolderDialog 
                             isOpen={newFolderDialogOpen} 
                             onClose={()=>{setNewFolderDialogOpen(false)} } 
-                            onCreate={(folderName)=>{addFolder({currentFolderId:currentFolderId, name:folderName});setNewFolderDialogOpen(false)}}/>
+                            onCreate={(folderName)=>{
+                                addFolder({currentFolderId:currentFolderId, name:folderName});
+                                setNewFolderDialogOpen(false)}}/>
+
+                        <RenameDialog 
+                            isOpen={renameFOlderDialogOpen}
+                            onClose={()=>{setRenameFolderDialogOpen(false)}}
+                            onRename={(name)=>{
+                                changeResourceName({resourceId:selectedResourceId ?? "", name:name});
+                                setRenameFolderDialogOpen(false);
+                                selectResource({id: null, type: null})
+                            }}/>
+
+                        <ConfirmDialog 
+                            isOpen={deleteDialogOpen} 
+                            title={"削除しますか？"} 
+                            message={"一度削除したら元に戻せません。"} 
+                            onConfirm={function (): void {
+                                removeFolder({folderId:selectedResourceId ?? "", parentFolderId:currentFolderId});
+                                setDeleteDialogOpen(false);
+                            }} 
+                            onCancel={function (): void {
+                                setDeleteDialogOpen(false);
+                            }}/>
 
                         { isResourceListLoading && <LoadingSpinner />}
 
