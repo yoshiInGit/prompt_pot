@@ -18,7 +18,7 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFile, addFolder, changeResourceName, openFolder, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
+import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
 import RenameDialog from "./modules/RenameFolderDialog";
 import ConfirmDialog from "./modules/ConifrmDialog";
 import NewFileDialog from "./modules/NewFileDialog";
@@ -41,7 +41,7 @@ const Editor = () => {
 
     const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
     const [newFileDialog, setNewFileDialogOpen] = useState<boolean>(false);
-    const [renameFOlderDialogOpen, setRenameFolderDialogOpen] = useState<boolean>(false);
+    const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
     
@@ -131,7 +131,7 @@ const Editor = () => {
                             {selectedResourceId && (
                                 <>
                                 <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
-                                    onClick={()=>{setRenameFolderDialogOpen(true)}}/>
+                                    onClick={()=>{setRenameDialogOpen(true)}}/>
                                 <MdDelete size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
                                     onClick={()=>{setDeleteDialogOpen(true)}}/>
                                 </>
@@ -165,6 +165,9 @@ const Editor = () => {
                                 type="file"
                                 name={file.name}
                                 isSelected={selectedResourceId === file.id}
+                                onClick={()=>{
+                                    selectResource({id:file.id, type: "file"})
+                                }}
                                 />
                             ))
                          }
@@ -185,11 +188,11 @@ const Editor = () => {
                             }}/>
 
                         <RenameDialog 
-                            isOpen={renameFOlderDialogOpen}
-                            onClose={()=>{setRenameFolderDialogOpen(false)}}
+                            isOpen={renameDialogOpen}
+                            onClose={()=>{setRenameDialogOpen(false)}}
                             onRename={(name)=>{
                                 changeResourceName({resourceId:selectedResourceId ?? "", name:name});
-                                setRenameFolderDialogOpen(false);
+                                setRenameDialogOpen(false);
                                 selectResource({id: null, type: null})
                             }}/>
 
@@ -198,7 +201,11 @@ const Editor = () => {
                             title={"削除しますか？"} 
                             message={"一度削除したら元に戻せません。"} 
                             onConfirm={function (): void {
-                                removeFolder({folderId:selectedResourceId ?? "", parentFolderId:currentFolderId});
+                                if(selectedResourceType=="file"){
+                                    removeFile({fileId:selectedResourceId ?? "", parentFolderId:currentFolderId})
+                                }else{
+                                    removeFolder({folderId:selectedResourceId ?? "", parentFolderId:currentFolderId});
+                                }
                                 setDeleteDialogOpen(false);
                             }} 
                             onCancel={function (): void {

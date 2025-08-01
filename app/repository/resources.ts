@@ -90,6 +90,7 @@ export const getFilesByParentId = async (parentId: string): Promise<File[]> => {
         }
         const folderData = folderSnapshot.data();
         const fileIds = folderData.files || [];
+        
         // ID2Name マッピングを取得
         const resourceDocRef = doc(db, "base", "resources");
         const resourceSnapshot = await getDoc(resourceDocRef);
@@ -158,11 +159,36 @@ export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, 
     }
 }
 
+export const deleteFile = async ({fileId, parentFolderId}:{fileId:string, parentFolderId:string}) => {
+    try {
+        const fileDocRef = doc(db, "base", "resources", "files", fileId);
+        const parentFolderDocRef = doc(db, "base", "resources", "folders", parentFolderId);
+        const resourceDocRef = doc(db, "base", "resources");
+        
+        await runTransaction(db, async (transaction) => {
+            // フォルダを削除
+            transaction.delete(fileDocRef);
+            // 親フォルダからフォルダIDを削除
+            transaction.update(parentFolderDocRef, {
+                files: arrayRemove(fileId)
+            });
+            transaction.update(resourceDocRef, {
+                [`id2name.${fileId}`]: deleteField() // id2name からも削除
+            });
+
+        });
+        console.log(`フォルダの削除に成功しました: ${fileId}`);
+    }catch (error) {
+        console.error("フォルダの削除に失敗しました:", error);
+        throw new Error("フォルダの削除に失敗しました。もう一度お試しください。");
+    }
+}
+
 export const addResource = async ({file, currentFolderId}:{file:File, currentFolderId:string}) => {
     try {
         await runTransaction(db, async (transaction) => {
             // /base/resources/file に新しいフォルダ情報をセット
-            transaction.set(doc(db, "base", "resources", "folders", file.id), {
+            transaction.set(doc(db, "base", "resources", "files", file.id), {
                 title : "",
                 description: "",
                 content: "",
