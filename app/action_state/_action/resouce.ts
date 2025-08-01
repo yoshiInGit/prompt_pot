@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder} from '@/app/repository/resources';
-import { Folder } from '@/app/models/directory';
+import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder, addResource, getFilesByParentId} from '@/app/repository/resources';
+import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
 
@@ -27,11 +27,12 @@ export const restoreFolder = async () => {
     LoadingState.getInstance().notifyResourceListSub();
 
     const folders = await getFoldersByParentId("base");
-    // TODO ファイルも取得する
+    const files   = await getFilesByParentId("base"); 
 
     const resourceState = ResourceState.getInstance();
     resourceState.currentFolderId = "base"; // フォルダを復元する場合は、ベースフォルダに戻す
     resourceState.folders = folders;
+    resourceState.files = files;
     resourceState.notify();
 
     LoadingState.getInstance().isResourceListLoading = false;
@@ -49,10 +50,12 @@ export const openFolder = async ({folderId}:{folderId:string}) => {
     LoadingState.getInstance().notifyResourceListSub();
 
     const folders = await getFoldersByParentId(folderId);
-    // TODO ファイルも取得する
+    const files   = await getFilesByParentId(folderId); 
+
 
     resourceState.currentFolderId = folderId; // フォルダを復元する場合は、ベースフォルダに戻す
     resourceState.folders = folders;
+    resourceState.files = files;
     resourceState.notify();
     
 
@@ -101,7 +104,27 @@ export const removeFolder = async ({folderId, parentFolderId}:{folderId:string, 
     LoadingState.getInstance().notifyResourceListSub();
 }
 
-export const addFile = () =>{
+export const addFile = async({fileName, currentFolderId}:{fileName:string, currentFolderId:string}) =>{
+    const newFile : File = {
+        id: uuidv4(),
+        name: fileName
+    }
+
+    LoadingState.getInstance().isResourceListLoading = true;
+    LoadingState.getInstance().notifyResourceListSub();
+
+    //DB処理
+    await addResource({file: newFile, currentFolderId: currentFolderId});
+
+    //ステート更新
+    const resourceState = ResourceState.getInstance();
+    if(currentFolderId == resourceState.currentFolderId){ // 現在のフォルダに追加してるか確認
+        resourceState.files.push(newFile);
+        resourceState.notify();
+    }
+
+    LoadingState.getInstance().isResourceListLoading = false;
+    LoadingState.getInstance().notifyResourceListSub();
 }
 
 export const changeFileName = () =>{

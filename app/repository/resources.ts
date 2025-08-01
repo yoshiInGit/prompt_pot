@@ -1,5 +1,5 @@
 import { arrayRemove, arrayUnion, deleteField, doc, getDoc, runTransaction, updateDoc} from "firebase/firestore";
-import { Folder } from "../models/directory";
+import { Folder, File } from "../models/directory";
 import { db } from "../firebase";
 
 export const addResourceFolder = async ({folder, currentFolderId}:{folder: Folder, currentFolderId : string}): Promise<void> => {
@@ -78,6 +78,46 @@ export const getFoldersByParentId = async (parentId: string): Promise<Folder[]> 
     }
 }
 
+export const getFilesByParentId = async (parentId: string): Promise<File[]> => {
+    try {
+        // フォルダIDを取得
+        const folderDocRef = doc(db, "base", "resources", "folders", parentId);
+        const folderSnapshot = await getDoc(folderDocRef);
+        if (!folderSnapshot.exists()) {
+            // TODO : エラーハンドリングを適切に行う
+            console.error(`フォルダが見つかりません: ${parentId}`);
+            return [];
+        }
+        const folderData = folderSnapshot.data();
+        const fileIds = folderData.files || [];
+        // ID2Name マッピングを取得
+        const resourceDocRef = doc(db, "base", "resources");
+        const resourceSnapshot = await getDoc(resourceDocRef);
+        if (!resourceSnapshot.exists()) {
+            // TODO : エラーハンドリングを適切に行う
+            console.error("リソース情報が見つかりません");
+            return [];
+        }
+        const resourceData = resourceSnapshot.data();
+        const id2name = resourceData.id2name || {};
+        console.log("ファイルID:", fileIds);
+        console.log("ID2Name マッピング:", id2name);
+
+        // ファイルIDと名前をマッピング
+        const files: File[] = fileIds.map((id: string) => {
+            return {
+                id: id,
+                name: id2name[id] || "Unknown File" // 名前がない場合はデフォルト名を設定
+            };
+        });
+
+        return files;
+    } catch (error) {
+        console.error("ファイルの取得に失敗しました:", error);
+        throw new Error("ファイルの取得に失敗しました。もう一度お試しください。");
+    }
+}
+
 export const updateResourceName = async ({folderId, name}:{folderId : string, name : string}) => {
     try {
         const folderDocRef = doc(db, "base", "resources");
@@ -115,5 +155,35 @@ export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, 
     }catch (error) {
         console.error("フォルダの削除に失敗しました:", error);
         throw new Error("フォルダの削除に失敗しました。もう一度お試しください。");
+    }
+}
+
+export const addResource = async ({file, currentFolderId}:{file:File, currentFolderId:string}) => {
+    try {
+        await runTransaction(db, async (transaction) => {
+            // /base/resources/file に新しいフォルダ情報をセット
+            transaction.set(doc(db, "base", "resources", "folders", file.id), {
+                title : "",
+                description: "",
+                content: "",
+            });
+
+            // /base/resources の id2name にフォルダ名を追加
+            transaction.update(doc(db, "base", "resources"), {
+                [`id2name.${file.id}`]: file.name
+            });
+
+            // /base/resources/folders/{currentFolderId} にフォルダIDを追加  
+            transaction.update(doc(db, "base", "resources", "folders", currentFolderId), {
+                files : arrayUnion(file.id)
+            })
+        });
+        console.log("ファイルの追加に成功しました:", file.id);
+    } catch (error) {
+
+        //TODO: エラーハンドリングを適切に行う
+        console.error("ファイルの追加に失敗しました:", error);
+        // 必要に応じて throw する
+        throw new Error("ファイルの追加に失敗しました。もう一度お試しください。");
     }
 }

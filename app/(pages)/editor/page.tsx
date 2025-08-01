@@ -18,9 +18,10 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFolder, changeResourceName, openFolder, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
+import { addFile, addFolder, changeResourceName, openFolder, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
 import RenameDialog from "./modules/RenameFolderDialog";
 import ConfirmDialog from "./modules/ConifrmDialog";
+import NewFileDialog from "./modules/NewFileDialog";
 
 const Editor = () => {
     // データの復元
@@ -39,6 +40,7 @@ const Editor = () => {
     const [resourceFiles, setResourceFiles] = useState<File[]>([])
 
     const [newFolderDialogOpen, setNewFolderDialogOpen] = useState<boolean>(false);
+    const [newFileDialog, setNewFileDialogOpen] = useState<boolean>(false);
     const [renameFOlderDialogOpen, setRenameFolderDialogOpen] = useState<boolean>(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
@@ -134,7 +136,8 @@ const Editor = () => {
                                     onClick={()=>{setDeleteDialogOpen(true)}}/>
                                 </>
                             )}
-                            <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                            <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                onClick={()=>{setNewFileDialogOpen(true)}}/>
                             <AiFillFolderAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
                                 onClick={()=>{setNewFolderDialogOpen(true)}}/>
                         </div>
@@ -172,6 +175,14 @@ const Editor = () => {
                             onCreate={(folderName)=>{
                                 addFolder({currentFolderId:currentFolderId, name:folderName});
                                 setNewFolderDialogOpen(false)}}/>
+                        
+                        <NewFileDialog 
+                            isOpen={newFileDialog} 
+                            onClose={()=>{setNewFileDialogOpen(false)}} 
+                            onCreate={(fileName)=>{
+                                addFile({fileName: fileName, currentFolderId: currentFolderId});
+                                setNewFileDialogOpen(false);
+                            }}/>
 
                         <RenameDialog 
                             isOpen={renameFOlderDialogOpen}
