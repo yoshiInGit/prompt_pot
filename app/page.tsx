@@ -3,8 +3,8 @@
 import React from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
-import Folder from "./(pages)/(home)/modules/Folder";
-import File from "./(pages)/(home)/modules/File";
+import File from "./modules/File"
+import Folder from "./modules/Folder"
 
 export default function Home() {
 
