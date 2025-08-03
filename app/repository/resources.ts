@@ -184,12 +184,16 @@ export const deleteFile = async ({fileId, parentFolderId}:{fileId:string, parent
     }
 }
 
+//　リソース関係
+const resourceCache : Map<string, Resource> = new Map();
+
 export const addResource = async ({file, currentFolderId}:{file:File, currentFolderId:string}) => {
     try {
         await runTransaction(db, async (transaction) => {
             // /base/resources/file に新しいフォルダ情報をセット
             transaction.set(doc(db, "base", "resources", "files", file.id), {
                 title : "",
+                genre: "other",
                 description: "",
                 content: "",
             });
@@ -203,6 +207,17 @@ export const addResource = async ({file, currentFolderId}:{file:File, currentFol
             transaction.update(doc(db, "base", "resources", "folders", currentFolderId), {
                 files : arrayUnion(file.id)
             })
+
+            //キャッシュを残す
+            const resource = new Resource({
+                id: file.id,
+                title: "", 
+                genre: "a",
+                description: "",
+                prompt: "",
+            })
+
+            resourceCache.set(file.id, resource);
         });
         console.log("ファイルの追加に成功しました:", file.id);
     } catch (error) {
@@ -211,5 +226,41 @@ export const addResource = async ({file, currentFolderId}:{file:File, currentFol
         console.error("ファイルの追加に失敗しました:", error);
         // 必要に応じて throw する
         throw new Error("ファイルの追加に失敗しました。もう一度お試しください。");
+    }
+}
+
+export const getResourceById = async ({id}:{id:string}) => {
+    if(resourceCache.has(id)){
+        return resourceCache.get(id)
+    }
+
+    try{
+        const fileDocRef = doc(db, "base", "resources", "files", id);
+        const fileSnapshot = await getDoc(fileDocRef);
+        if (!fileSnapshot.exists()) {
+            // TODO : エラーハンドリングを適切に行う
+            console.error(`フォルダが見つかりません: ${id}`);
+            return [];
+        }
+
+        const fileData = fileSnapshot.data();
+        
+        const resource = new Resource({
+            id : id,
+            title : fileData.title,
+            genre : fileData.gene,
+            description :fileData.description,
+            prompt : fileData.prompt,
+        })
+
+        resourceCache.set(id, resource);
+        
+        return resource; 
+
+    }catch(error){
+        //TODO: エラーハンドリングを適切に行う
+        console.error("ファイルの取得に失敗しました:", error);
+        // 必要に応じて throw する
+        throw new Error("ファイルの取得に失敗しました。もう一度お試しください。");
     }
 }
