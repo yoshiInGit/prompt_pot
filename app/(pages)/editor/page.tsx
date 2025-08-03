@@ -1,10 +1,11 @@
 'use client';
 
 import { MdDelete, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import { IoReturnUpBack } from "react-icons/io5";
 import { VscPreview } from "react-icons/vsc";
 import { GoCpu } from "react-icons/go";
-import { FaCopy } from "react-icons/fa";
+import { FaAngleDoubleUp, FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import { BiSolidRename } from "react-icons/bi";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
@@ -22,6 +23,7 @@ import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeF
 import RenameDialog from "./modules/RenameFolderDialog";
 import ConfirmDialog from "./modules/ConifrmDialog";
 import NewFileDialog from "./modules/NewFileDialog";
+import EditResourceDialog from "./modules/EditResourceDialog";
 
 const Editor = () => {
     // データの復元
@@ -43,6 +45,7 @@ const Editor = () => {
     const [newFileDialog, setNewFileDialogOpen] = useState<boolean>(false);
     const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+    const [editResourceDialogOpen, setEditResourceDialogOpen] = useState<boolean>(false);
     const [isResourceListLoading, setIsResourceListLoading] = useState<boolean>(false);
     
     const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null); 
@@ -128,6 +131,13 @@ const Editor = () => {
                                     setResourceFolderHistory(resourceFolderHistory.slice(0, -1));
                                 }}/>}
                             <div className="grow"/>
+                            {selectedResourceType=="file" && (
+                                <>
+                                <MdEdit size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                                    onClick={()=>{setEditResourceDialogOpen(true)}}/>
+                                <FaAngleDoubleUp size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                                </>
+                            )}
                             {selectedResourceId && (
                                 <>
                                 <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
@@ -211,6 +221,17 @@ const Editor = () => {
                             onCancel={function (): void {
                                 setDeleteDialogOpen(false);
                             }}/>
+
+                        <EditResourceDialog 
+                            isOpen={editResourceDialogOpen}
+                            onClose={function (): void {
+                                setEditResourceDialogOpen(false);
+                            } }
+                            onUpdate={function ({ title, genre, description, prompt }: { title: string; genre: ResourceGenre; description: string; prompt: string; }): void {
+                                throw new Error("Function not implemented.");
+                            } } 
+                            toUpdateResource={undefined}                        
+                            />
 
                         { isResourceListLoading && <LoadingSpinner />}
 
