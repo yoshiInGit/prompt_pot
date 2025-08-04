@@ -24,6 +24,7 @@ import RenameDialog from "./modules/RenameFolderDialog";
 import ConfirmDialog from "./modules/ConifrmDialog";
 import NewFileDialog from "./modules/NewFileDialog";
 import EditResourceDialog from "./modules/EditResourceDialog";
+import { Resource, ResourceGenre } from "@/app/models/resource";
 
 const Editor = () => {
     // データの復元

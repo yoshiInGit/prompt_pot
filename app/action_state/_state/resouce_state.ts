@@ -1,4 +1,5 @@
 import { Folder, File } from "@/app/models/directory";
+import { Resource } from "@/app/models/resource";
 
 // 現在表紙しているリソース欄の状態を管理するシングルトン
 type OnChange  = ({currentFolderId, folders, files, selectedResource}:{currentFolderId:string, folders:Folder[], files:File[], selectedResource:Resource|null})=>void
