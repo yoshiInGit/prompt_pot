@@ -1,3 +1,5 @@
+import { Resource, ResourceGenre } from "@/app/models/resource";
+
 interface ResourceDialogProps {
   isOpen: boolean;
   toUpdateResource? : Resource;

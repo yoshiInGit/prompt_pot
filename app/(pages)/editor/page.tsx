@@ -19,7 +19,7 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import NewFolderDialog from "./modules/NewFolderDialog";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "../../action_state/_state/loading_state";
-import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeFolder, restoreFolder } from "../../action_state/_action/resouce";
+import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeFolder, restoreFolder, selectFile } from "../../action_state/_action/resouce";
 import RenameDialog from "./modules/RenameFolderDialog";
 import ConfirmDialog from "./modules/ConifrmDialog";
 import NewFileDialog from "./modules/NewFileDialog";
@@ -50,6 +50,7 @@ const Editor = () => {
     
     const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null); 
     const [selectedResourceType, setSelectedResourceType] = useState<"folder" | "file" | null>(null);
+    const [selectedResource, setSelectedResource] = useState<Resource|null>(null);
     const [resourceFolderHistory, setResourceFolderHistory] = useState<string[]>(["base"]);
     const selectResource = ({id, type}:{id:string|null, type:"folder" | "file" | null}) => {
         setSelectedResourceId(id);
@@ -57,10 +58,11 @@ const Editor = () => {
     }
 
     useEffect(() => {
-        const updateResource = ({currentFolderId, folders, files}: {currentFolderId: string, folders: Folder[], files: File[]}) => {
+        const updateResource = ({currentFolderId, folders, files, selectedResource}: {currentFolderId: string, folders: Folder[], files: File[], selectedResource:Resource|null}) => {
             setCurrentFolderId(currentFolderId);
             setResourceFolders(folders);
             setResourceFiles(files);
+            setSelectedResource(selectedResource)
         }
 
         const updateResourceListLoading = ({isLoading}: {isLoading: boolean}) => {
@@ -176,7 +178,8 @@ const Editor = () => {
                                 name={file.name}
                                 isSelected={selectedResourceId === file.id}
                                 onClick={()=>{
-                                    selectResource({id:file.id, type: "file"})
+                                    selectResource({id:file.id, type: "file"});
+                                    selectFile({file:file})
                                 }}
                                 />
                             ))

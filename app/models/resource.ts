@@ -1,6 +1,6 @@
-type ResourceGenre = "a"| "b"
+export type ResourceGenre = "a"| "b"
 
-class Resource  {
+export class Resource  {
     id: string
     title : string
     genre : ResourceGenre

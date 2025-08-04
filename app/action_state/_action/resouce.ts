@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder, addResource, getFilesByParentId, deleteFile} from '@/app/repository/resources';
+import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder, addResource, getFilesByParentId, deleteFile, getResourceById} from '@/app/repository/resources';
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
@@ -144,4 +144,12 @@ export const removeFile = async ({fileId, parentFolderId}:{fileId : string, pare
 
     LoadingState.getInstance().isResourceListLoading = false;
     LoadingState.getInstance().notifyResourceListSub();
+}
+
+export const selectFile = async ({file}:{file:File}) => {
+    const resource = await getResourceById({id : file.id});
+
+    const resourceState = ResourceState.getInstance();
+    resourceState.selectedResource = resource;
+    resourceState.notify();
 }
