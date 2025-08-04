@@ -1,5 +1,6 @@
 import { arrayRemove, arrayUnion, deleteField, doc, getDoc, runTransaction, updateDoc} from "firebase/firestore";
 import { Folder, File } from "../models/directory";
+import {Resource} from "../models/resource";
 import { db } from "../firebase";
 
 export const addResourceFolder = async ({folder, currentFolderId}:{folder: Folder, currentFolderId : string}): Promise<void> => {
@@ -229,9 +230,9 @@ export const addResource = async ({file, currentFolderId}:{file:File, currentFol
     }
 }
 
-export const getResourceById = async ({id}:{id:string}) => {
+export const getResourceById = async ({id}:{id:string}) : Promise<Resource | null> => {
     if(resourceCache.has(id)){
-        return resourceCache.get(id)
+        return resourceCache.get(id) ?? null;
     }
 
     try{
@@ -240,7 +241,7 @@ export const getResourceById = async ({id}:{id:string}) => {
         if (!fileSnapshot.exists()) {
             // TODO : エラーハンドリングを適切に行う
             console.error(`フォルダが見つかりません: ${id}`);
-            return [];
+            return null;
         }
 
         const fileData = fileSnapshot.data();
