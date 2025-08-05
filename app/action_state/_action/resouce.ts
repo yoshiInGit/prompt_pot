@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId, updateResourceName, deleteFolder, addResource, getFilesByParentId, deleteFile, getResourceById} from '@/app/repository/resources';
+import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById} from '@/app/repository/resources';
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
@@ -7,7 +7,7 @@ import ResourceState from '../_state/resouce_state';
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
         // DB更新
-        await updateResourceName({folderId: resource, name: name});
+        await updateName({folderId: resource, name: name});
 
         // ステート更新
         const resourceState = ResourceState.getInstance();
@@ -105,7 +105,7 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
 export const removeFile = async ({fileId, parentFolderId}:{fileId : string, parentFolderId:string}) =>{
     await _onResourceLoading(async ()=>{
         //DB処理
-        await deleteFile({fileId:fileId, parentFolderId:parentFolderId});
+        await deleteResource({fileId:fileId, parentFolderId:parentFolderId});
         
         //ステート更新
         const resourceState = ResourceState.getInstance();
