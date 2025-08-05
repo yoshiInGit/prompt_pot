@@ -1,6 +1,6 @@
 import { arrayRemove, arrayUnion, deleteField, doc, DocumentData, getDoc, runTransaction, updateDoc} from "firebase/firestore";
 import { Folder, File } from "../models/directory";
-import {Resource} from "../models/resource";
+import {Resource, ResourceGenre, ResourceGenreType} from "../models/resource";
 import { db } from "../firebase";
 
 //クエリ系
@@ -149,7 +149,7 @@ export const addResource = async ({file, currentFolderId}:{file:File, currentFol
             const resource = new Resource({
                 id:    file.id,
                 title: "", 
-                genre: "a",
+                genre: new ResourceGenre(ResourceGenreType.OTHER), 
                 description: "",
                 prompt: "",
             })

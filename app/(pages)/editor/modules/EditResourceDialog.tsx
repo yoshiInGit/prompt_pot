@@ -33,7 +33,7 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
 
                     <div className="text-sm font-bold text-gray-600">分類</div>
                     <select id="dropdown" className="block w-full pl-3 pr-10 py-2 text-gray-700 leading-tight border border-gray-400 focus:outline-none rounded-md cursor-pointer mb-2"
-                      defaultValue={toUpdateResource?.genre ?? ""}>
+                      defaultValue={toUpdateResource?.genre.name() ?? ""}>
                         <option value="">-- 選択 --</option>
                         <option value="option1">オプション1</option>
                         <option value="option2">オプション2</option>
@@ -45,7 +45,7 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                         rows={8}
                         className="appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none mb-4"
                         placeholder="プロンプトの説明..."
-                        defaultValue={toUpdateResource?.genre}
+                        defaultValue={toUpdateResource?.genre.name() ?? ""}
                     ></textarea>
                 </div>
 
