@@ -1,31 +1,15 @@
 'use client';
 
-import { MdDelete, MdKeyboardDoubleArrowRight } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
-import { IoReturnUpBack } from "react-icons/io5";
-import { VscPreview } from "react-icons/vsc";
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { GoCpu } from "react-icons/go";
-import { FaAngleDoubleUp, FaCopy } from "react-icons/fa";
+import {FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
-import { BiSolidRename } from "react-icons/bi";
 import AdditionalPromptCard from "./modules/AdditionalPromptCard";
-import ResourceTile from "./modules/ResouceTile";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
-import { useEffect, useRef, useState } from "react";
-import { File, Folder } from "@/app/models/directory";
-import ResourceState from "../../action_state/_state/resouce_state";
-import { AiFillFileAdd } from "react-icons/ai";
-import { AiFillFolderAdd } from "react-icons/ai";
-import NewFolderDialog from "./modules/NewFolderDialog";
-import LoadingSpinner from "../_common/Loading_spinner";
-import LoadingState from "../../action_state/_state/loading_state";
-import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeFolder, restoreFolder, selectFile } from "../../action_state/_action/resouce";
-import RenameDialog from "./modules/RenameFolderDialog";
-import ConfirmDialog from "./modules/ConifrmDialog";
-import NewFileDialog from "./modules/NewFileDialog";
-import EditResourceDialog from "./modules/EditResourceDialog";
-import { Resource, ResourceGenre } from "@/app/models/resource";
+import { useEffect, useRef} from "react";
+import {restoreFolder} from "../../action_state/_action/resouce";
 import ResourceList from "./section/ResourceList";
+import ResourcePreview from "./section/ResourcePreview";
 
 const Editor = () => {
     // データの復元
@@ -79,12 +63,7 @@ const Editor = () => {
                     <ResourceList/>
 
                     {/* リソースプレビュー */}
-                    <div className="w-3/5 h-full bg-white shadow flex flex-col rounded">
-                        <div className="flex items-center mb-2">
-                            <VscPreview size={16}/>
-                            <div className="text-gray-600 ml-2">Resource Preview</div>
-                        </div>
-                    </div>
+                    <ResourcePreview/>
                 </div>
             </div>
 
