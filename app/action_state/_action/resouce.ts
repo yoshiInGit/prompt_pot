@@ -119,6 +119,7 @@ export const selectFile = async ({file}:{file:File}) => {
 
     const resourceState = ResourceState.getInstance();
     resourceState.selectedResource = resource;
+    console.log("Selected Resource:", resource);
     resourceState.notify();
 }
 

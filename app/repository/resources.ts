@@ -84,11 +84,12 @@ export const getResourceById = async ({id}:{id:string}) : Promise<Resource | nul
         }
 
         const fileData = fileSnapshot.data();
+        console.log("File Data:", fileData);
         
         const resource = new Resource({
             id : id,
             title : fileData.title,
-            genre : fileData.gene,
+            genre : new ResourceGenre(fileData.genre),
             description :fileData.description,
             prompt : fileData.prompt,
         })
