@@ -1,8 +1,26 @@
 import { GoCpu } from "react-icons/go";
 import AdditionalPromptCard from "../modules/AdditionalPromptCard";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { useState, useEffect } from "react";
+import { Resource } from "@/app/models/resource";
+import PromptState from "@/app/action_state/_state/prompt_state";
 
 const PromptArea = () => {
+    const [additionalPrompts, setAdditionalPrompts] = useState<Resource[]>([]);
+
+    useEffect(() => {
+        const updatePrompts = ({additionalPrompts}: {additionalPrompts: Resource[]}) => {
+            setAdditionalPrompts(additionalPrompts);
+        }
+
+        // PromptStateのインスタンスを取得
+        const promptState = PromptState.getInstance();
+        promptState.subscribe(updatePrompts);
+        return () => {
+            promptState.unsubscribe(updatePrompts);
+        }
+    }, []);
+
   return (
     <>
     {/* ベースプロンプト */}
@@ -19,12 +37,12 @@ const PromptArea = () => {
 
     </div>
     
-    {/* アディクションプロンプロ */}
+    {/* アディクションプロンプト */}
     <div className="relative flex-grow h-full">
         <div className="absolute w-full h-full flex flex-col gap-2 px-2">
-                <AdditionalPromptCard />
-                <AdditionalPromptCard />
-                <AdditionalPromptCard />
+            {additionalPrompts.map((prompt, index) => (
+                <AdditionalPromptCard key={index}/>
+            ))}
         </div>
 
     </div>
