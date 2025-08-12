@@ -3,7 +3,7 @@ import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addR
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
-import { Resource, ResourceGenre } from '@/app/models/resource';
+import { Resource, ResourceGenre, ResourceGenreType } from '@/app/models/resource';
 
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
@@ -91,6 +91,14 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
             name: fileName
         }
 
+        const newResource = new Resource({
+            id:    newFile.id,
+            title: "", 
+            genre: new ResourceGenre(ResourceGenreType.OTHER), 
+            description: "",
+            prompt: "",
+        });
+
         //DB処理
         await addResource({file: newFile, currentFolderId: currentFolderId});
 
@@ -100,6 +108,8 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
             resourceState.files.push(newFile);
             resourceState.notify();
         }
+        resourceState.selectedResource = newResource; // 新しく追加したリソースを選択状態にする
+        resourceState.notify();
     });
 }
 
