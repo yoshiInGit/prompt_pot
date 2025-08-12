@@ -1,4 +1,5 @@
 import { Resource, ResourceGenre } from "@/app/models/resource";
+import React from "react";
 
 interface ResourceDialogProps {
   isOpen: boolean;
@@ -13,6 +14,10 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
     onClose,
     onUpdate
 }) => {
+    const [title, setTitle] = React.useState(toUpdateResource?.title ?? "");
+    const [genre, setGenre] = React.useState(toUpdateResource?.genre ?? ResourceGenre.getAllGenres()[0]);
+    const [description, setDescription] = React.useState(toUpdateResource?.description ?? "");
+    const [prompt, setPrompt] = React.useState(toUpdateResource?.prompt ?? "");
 
     if (!isOpen) {
         return null;
@@ -29,15 +34,22 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                       className="appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
                       placeholder="タイトルを入力"
                       defaultValue={toUpdateResource?.title ?? ""}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
 
                     <div className="text-sm font-bold text-gray-600">分類</div>
                     <select id="dropdown" className="block w-full pl-3 pr-10 py-2 text-gray-700 leading-tight border border-gray-400 focus:outline-none rounded-md cursor-pointer mb-2"
-                      defaultValue={toUpdateResource?.genre.name() ?? ""}>
-                        <option value="">-- 選択 --</option>
-                        <option value="option1">オプション1</option>
-                        <option value="option2">オプション2</option>
-                        <option value="option3">オプション3</option>
+                        onChange={(e) => {
+                            const selectedGenre = ResourceGenre.getAllGenres().find(g => g.genre === e.target.value);
+                            if (selectedGenre) {
+                                setGenre(selectedGenre);
+                            }
+                        }}>
+
+                        <option value="" hidden>{toUpdateResource?.genre.name()}</option>   
+                        { ResourceGenre.getAllGenres().map((genre) => (
+                            <option key={genre.genre} value={genre.genre}>{genre.name()}</option>
+                        ))}
                     </select>
 
                     <div className="text-sm font-bold text-gray-600">説明</div>
@@ -45,7 +57,8 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                         rows={8}
                         className="appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none mb-4"
                         placeholder="プロンプトの説明..."
-                        defaultValue={toUpdateResource?.genre.name() ?? ""}
+                        defaultValue={toUpdateResource?.description ?? ""}
+                        onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
                 </div>
 
@@ -55,6 +68,7 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                         className="grow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none mb-4"
                         placeholder="プロンプト..."
                         defaultValue={toUpdateResource?.prompt ?? ""}
+                        onChange={(e) => setPrompt(e.target.value)}
                     ></textarea>
 
                     <div className="w-full flex justify-end gap-2">
@@ -65,7 +79,14 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                         </button>
                         <button
                           className="px-4 py-2 text-sm font-bold text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
-                        >
+                          onClick={() => {
+                            onUpdate({
+                                title: title,
+                                genre: genre,
+                                description: description,
+                                prompt: prompt
+                            });
+                          }}>
                           更新
                         </button>
                     </div>

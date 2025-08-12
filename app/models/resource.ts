@@ -13,6 +13,16 @@ export class ResourceGenre {
         this.genre = genre;
     }
 
+    static getAllGenres(): ResourceGenre[] {
+        return [
+            new ResourceGenre(ResourceGenreType.INSTRUCTION),
+            new ResourceGenre(ResourceGenreType.CONTEXT),
+            new ResourceGenre(ResourceGenreType.FORMAT),
+            new ResourceGenre(ResourceGenreType.CONSTRAINT),
+            new ResourceGenre(ResourceGenreType.OTHER)
+        ];
+    }
+
     name(){
         switch(this.genre){
             case ResourceGenreType.INSTRUCTION: return "指示";
@@ -21,7 +31,6 @@ export class ResourceGenre {
             case ResourceGenreType.CONSTRAINT:  return "制約条件";
             case ResourceGenreType.OTHER:       return "その他";
         }
-        return "その他";
     }
 }
 

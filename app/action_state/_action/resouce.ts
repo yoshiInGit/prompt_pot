@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById} from '@/app/repository/resources';
+import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById, updateResource} from '@/app/repository/resources';
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
+import { Resource, ResourceGenre } from '@/app/models/resource';
 
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
@@ -121,6 +122,26 @@ export const selectFile = async ({file}:{file:File}) => {
     resourceState.selectedResource = resource;
     console.log("Selected Resource:", resource);
     resourceState.notify();
+}
+
+export const editResource = async ({id, title, genre, description, prompt }:{id:string, title: string; genre: ResourceGenre; description: string; prompt: string;}) => {
+    const updatedResource =  new Resource({ 
+        id: id,
+        title: title,
+        genre: genre,
+        description: description,
+        prompt: prompt
+    });
+
+    // DB更新
+    await updateResource({updatedResource: updatedResource});
+
+    // ステート更新
+    const resourceState = ResourceState.getInstance();
+    if (resourceState.selectedResource && resourceState.selectedResource.id === id) {
+        resourceState.selectedResource = updatedResource; // 選択中のリソースを更新
+        resourceState.notify();
+    }
 }
 
 

@@ -1,4 +1,4 @@
-import { addFile, addFolder, changeResourceName, openFolder, removeFile, removeFolder, selectFile } from "@/app/action_state/_action/resouce";
+import { addFile, addFolder, changeResourceName, editResource, openFolder, removeFile, removeFolder, selectFile } from "@/app/action_state/_action/resouce";
 import LoadingState from "@/app/action_state/_state/loading_state";
 import ResourceState from "@/app/action_state/_state/resouce_state";
 import { Folder, File } from "@/app/models/directory";
@@ -179,9 +179,19 @@ const ResourceList = () => {
                         setEditResourceDialogOpen(false);
                     } }
                     onUpdate={function ({ title, genre, description, prompt }: { title: string; genre: ResourceGenre; description: string; prompt: string; }): void {
-                        throw new Error("Function not implemented.");
+                        if (selectedResource) {
+                            editResource({
+                                id:          selectedResource.id,
+                                title:       title,
+                                genre:       genre,
+                                description: description,
+                                prompt:      prompt
+                            });
+
+                            setEditResourceDialogOpen(false);
+                        }
                     } } 
-                    toUpdateResource={undefined}                        
+                    toUpdateResource={selectedResource ?? undefined}                        
                 />
 
                 { isResourceListLoading && <LoadingSpinner />}
