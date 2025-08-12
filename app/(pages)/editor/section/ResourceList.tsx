@@ -143,9 +143,10 @@ const ResourceList = () => {
             <NewFileDialog 
                 isOpen={newFileDialog} 
                 onClose={()=>{setNewFileDialogOpen(false)}} 
-                onCreate={(fileName)=>{
-                    addFile({fileName: fileName, currentFolderId: currentFolderId});
+                onCreate={async (fileName)=>{
                     setNewFileDialogOpen(false);
+                    await addFile({fileName: fileName, currentFolderId: currentFolderId});
+                    setEditResourceDialogOpen(true);
             }}/>
 
             <RenameDialog 
@@ -167,6 +168,8 @@ const ResourceList = () => {
                     }else{
                         removeFolder({folderId:selectedResourceId ?? "", parentFolderId:currentFolderId});
                     }
+
+                    selectResource({id: null, type: null});
                     setDeleteDialogOpen(false);
                 }} 
                 onCancel={function (): void {
