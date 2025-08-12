@@ -170,6 +170,20 @@ export const updateName = async ({folderId, name}:{folderId : string, name : str
     })
 }
 
+export const updateResource = async ({updatedResource}:{updatedResource: Resource}) => {
+    await _onTryFirebase(async () => {
+        const resourceDocRef = doc(db, "base", "resources", "files", updatedResource.id);
+        await updateDoc(resourceDocRef, {
+            title:       updatedResource.title,
+            genre:       updatedResource.genre.genre,
+            description: updatedResource.description,
+            prompt:      updatedResource.prompt
+        });
+        // キャッシュを更新
+        resourceCache.set(updatedResource.id, updatedResource);
+    });
+}
+
 export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) => {
     await _onTryFirebase(async()=>{
 
