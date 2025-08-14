@@ -1,4 +1,4 @@
-import { Resource } from "@/app/models/resource";
+import { Resource, ResourceGenreType } from "@/app/models/resource";
 import PromptState from "../_state/prompt_state";
 
 export const addPrompt = async (resource : Resource) => {
@@ -13,10 +13,27 @@ export const addPrompt = async (resource : Resource) => {
     }
 
     promptState.additionalPrompts.push(resource);
+    promptState.additionalPrompts = _sortByGenre(promptState.additionalPrompts);
     promptState.notify();
 
     //TODO: データベースに保存する処理を追加
 }
+
+const _sortByGenre = (resources : Resource[]) => {
+    const genreOrder = [
+        ResourceGenreType.INSTRUCTION,
+        ResourceGenreType.CONTEXT,
+        ResourceGenreType.FORMAT,
+        ResourceGenreType.CONSTRAINT,
+        ResourceGenreType.OTHER
+    ]
+
+    return resources.sort((a, b) => {
+        const genreIndexA = genreOrder.indexOf(a.genre.genre);
+        const genreIndexB = genreOrder.indexOf(b.genre.genre);
+        return genreIndexA - genreIndexB;
+    });
+}   
 
 export const removePrompt = async ({resourceId}:{resourceId:string}) => {
     // ステート更新
