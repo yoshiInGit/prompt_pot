@@ -17,3 +17,15 @@ export const addPrompt = async (resource : Resource) => {
 
     //TODO: データベースに保存する処理を追加
 }
+
+export const removePrompt = async ({resourceId}:{resourceId:string}) => {
+    // ステート更新
+    const promptState = PromptState.getInstance();  
+    const currentPrompts = promptState.additionalPrompts;
+
+    // 指定されたIDのプロンプトを削除
+    promptState.additionalPrompts = currentPrompts.filter(prompt => prompt.id !== resourceId);
+    promptState.notify();
+
+    //TODO: データベースから削除する処理を追加
+}

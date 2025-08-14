@@ -4,6 +4,7 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { Resource } from "@/app/models/resource";
 import PromptState from "@/app/action_state/_state/prompt_state";
+import { removePrompt } from "@/app/action_state/_action/prompt";
 
 const PromptArea = () => {
     const [additionalPrompts, setAdditionalPrompts] = useState<Resource[]>([]);
@@ -44,12 +45,15 @@ const PromptArea = () => {
             scrollbarWidth: 'none', /* Firefox */
             msOverflowStyle: 'none' /* IE/Edge */
           }}>
-            {additionalPrompts.map((prompt, index) => (
+            {additionalPrompts.map((resource, index) => (
                 <AdditionalPromptCard 
                     key={index}
-                    name={prompt.title}
-                    description={prompt.description}
-                    color={prompt.genre.color()}/>
+                    name={resource.title}
+                    description={resource.description}
+                    color={resource.genre.color()}
+                    onRemove={()=>{
+                        removePrompt({resourceId: resource.id });
+                    }}/>
             ))}
         </div>
 
