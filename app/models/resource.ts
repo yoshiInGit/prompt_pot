@@ -48,4 +48,14 @@ export class Resource  {
         this.description = description
         this.prompt = prompt
     }
+
+    static createEmpty(id?: string): Resource {
+        return new Resource({
+            id: id ?? "",
+            title: "",
+            genre: new ResourceGenre(ResourceGenreType.OTHER),
+            description: "",
+            prompt: ""
+        });
+    }
 }

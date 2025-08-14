@@ -17,7 +17,7 @@ const AdditionalPromptCard: React.FC<AdditionalPromptCardProps> = ({
     onRemove = () => {}
 }) => {
     return (
-        <div className="w-full bg-white min-h-0 shadow-md py-2 px-2 rounded flex flex-col cursor-pointer">
+        <div className="w-full bg-white h-20 shadow-md py-2 px-2 rounded flex flex-col cursor-pointer">
             <div className="flex">
                 {/* カラー表示 */}
                 <div className={`w-10 h-2 bg-${color}`}/>

@@ -10,7 +10,7 @@ const PromptArea = () => {
 
     useEffect(() => {
         const updatePrompts = ({additionalPrompts}: {additionalPrompts: Resource[]}) => {
-            setAdditionalPrompts(additionalPrompts);
+            setAdditionalPrompts([...additionalPrompts]);
         }
 
         // PromptStateのインスタンスを取得
@@ -39,7 +39,11 @@ const PromptArea = () => {
     
     {/* アディクションプロンプト */}
     <div className="relative flex-grow h-full">
-        <div className="absolute w-full h-full flex flex-col gap-2 px-2">
+        <div className="absolute w-full h-full flex flex-col gap-2 px-2 overflow-y-scroll hidden-scrollbar"
+            style={{
+            scrollbarWidth: 'none', /* Firefox */
+            msOverflowStyle: 'none' /* IE/Edge */
+          }}>
             {additionalPrompts.map((prompt, index) => (
                 <AdditionalPromptCard key={index}/>
             ))}
