@@ -1,5 +1,28 @@
 import { Resource, sortResourcesByGenre } from "@/app/models/resource";
 import PromptState from "../_state/prompt_state";
+import { getAdditionalPromptIds, registerAdditionalPrompt, unregisterAdditionalPrompt } from "@/app/repository/prompt";
+import { getResourceById } from "@/app/repository/resources";
+
+export const restorePrompts = async () => {
+    // IDを取得
+    const promptIds = await getAdditionalPromptIds();
+
+    const resources: Resource[] = [];
+    for(const id of promptIds){
+        const resource = await getResourceById({id:id});
+        if(resource){
+            resources.push(resource);
+        }
+    }
+
+
+    // ステート更新
+    const promptState = PromptState.getInstance();
+    promptState.additionalPrompts = resources;
+    promptState.additionalPrompts = sortResourcesByGenre(promptState.additionalPrompts);
+    promptState.notify();
+}   
+
 
 export const addPrompt = async (resource : Resource) => {
 
@@ -16,7 +39,8 @@ export const addPrompt = async (resource : Resource) => {
     promptState.additionalPrompts = sortResourcesByGenre(promptState.additionalPrompts);
     promptState.notify();
 
-    //TODO: データベースに保存する処理を追加
+    // データベース更新
+    await registerAdditionalPrompt({resourceId : resource.id});
 }
 
 export const removePrompt = async ({resourceId}:{resourceId:string}) => {
@@ -28,5 +52,6 @@ export const removePrompt = async ({resourceId}:{resourceId:string}) => {
     promptState.additionalPrompts = currentPrompts.filter(prompt => prompt.id !== resourceId);
     promptState.notify();
 
-    //TODO: データベースから削除する処理を追加
+    // データベース更新
+    await unregisterAdditionalPrompt({resourceId : resourceId});
 }
