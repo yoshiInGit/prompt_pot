@@ -3,7 +3,8 @@ import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addR
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../_state/loading_state';
 import ResourceState from '../_state/resouce_state';
-import { Resource, ResourceGenre, ResourceGenreType } from '@/app/models/resource';
+import { Resource, ResourceGenre, ResourceGenreType, sortResourcesByGenre } from '@/app/models/resource';
+import PromptState from '../_state/prompt_state';
 
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
@@ -152,6 +153,15 @@ export const editResource = async ({id, title, genre, description, prompt }:{id:
         resourceState.selectedResource = updatedResource; // 選択中のリソースを更新
         resourceState.notify();
     }
+
+    // 追加プロンプトステートも必要なら更新
+    const promptState = PromptState.getInstance();
+    const targetIndex = promptState.additionalPrompts.findIndex(prompt => prompt.id === id);
+    if (targetIndex !== -1) {
+        promptState.additionalPrompts[targetIndex] = updatedResource; // 既存のプロンプトを更新
+    }
+    promptState.additionalPrompts = sortResourcesByGenre(promptState.additionalPrompts);
+    promptState.notify();
 }
 
 
