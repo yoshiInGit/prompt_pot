@@ -32,6 +32,16 @@ export class ResourceGenre {
             case ResourceGenreType.OTHER:       return "その他";
         }
     }
+
+    color(): string {
+        switch(this.genre){
+            case ResourceGenreType.INSTRUCTION: return "#ff6373";
+            case ResourceGenreType.CONTEXT:     return "#83ff63";
+            case ResourceGenreType.FORMAT:      return "#5e66ff";
+            case ResourceGenreType.CONSTRAINT:  return "#ffe44d";
+            case ResourceGenreType.OTHER:       return "#fc63ff";
+        }
+    }
 }
 
 export class Resource  {

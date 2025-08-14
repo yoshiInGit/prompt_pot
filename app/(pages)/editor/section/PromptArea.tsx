@@ -45,7 +45,11 @@ const PromptArea = () => {
             msOverflowStyle: 'none' /* IE/Edge */
           }}>
             {additionalPrompts.map((prompt, index) => (
-                <AdditionalPromptCard key={index}/>
+                <AdditionalPromptCard 
+                    key={index}
+                    name={prompt.title}
+                    description={prompt.description}
+                    color={prompt.genre.color()}/>
             ))}
         </div>
 

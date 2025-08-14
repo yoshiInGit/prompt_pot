@@ -11,16 +11,17 @@ interface AdditionalPromptCardProps {
 
 const AdditionalPromptCard: React.FC<AdditionalPromptCardProps> = ({
     onClick = () => {},
-    name = "Folder Name",
+    name = "Resource Name",
     description = "This is a description of the additional prompt.",
-    color = "red-400",
+    color = "#fc63ff",
     onRemove = () => {}
 }) => {
     return (
         <div className="w-full bg-white h-20 shadow-md py-2 px-2 rounded flex flex-col cursor-pointer">
-            <div className="flex">
+            <div className="flex justify-between items-center mb-1">
                 {/* カラー表示 */}
-                <div className={`w-10 h-2 bg-${color}`}/>
+                <div className={`w-16 h-2`}
+                    style={{backgroundColor:color}}/>
                 <div className="flex-grow"/>
                 <IoIosRemoveCircle size={20} color="gray" className="cursor-pointer"
                     onClick={(e)=>{e.stopPropagation();onRemove()}}/>
