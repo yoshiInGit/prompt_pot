@@ -1,5 +1,5 @@
 import { Resource, ResourceGenre } from "@/app/models/resource";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface ResourceDialogProps {
   isOpen: boolean;
@@ -14,13 +14,31 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
     onClose,
     onUpdate
 }) => {
-    const [title, setTitle] = React.useState(toUpdateResource?.title ?? "");
-    const [genre, setGenre] = React.useState(toUpdateResource?.genre ?? ResourceGenre.getAllGenres()[0]);
-    const [description, setDescription] = React.useState(toUpdateResource?.description ?? "");
-    const [prompt, setPrompt] = React.useState(toUpdateResource?.prompt ?? "");
+    const [title, setTitle] = React.useState("");
+    const [genre, setGenre] = React.useState(ResourceGenre.getAllGenres()[0]);
+    const [description, setDescription] = React.useState("");
+    const [prompt, setPrompt] = React.useState("");
+
+    useEffect(() => {
+        // ダイアログが開いたときに編集情報をセット
+        // 直接紐づけると、途中でリセットされるバグが発生
+        if(isOpen==true){
+            setTitle(toUpdateResource?.title ?? "");
+            setGenre(toUpdateResource?.genre ?? ResourceGenre.getAllGenres()[0]);
+            setDescription(toUpdateResource?.description ?? "");
+            setPrompt(toUpdateResource?.prompt ?? "");
+        }
+    }, [isOpen]);
 
     if (!isOpen) {
         return null;
+    }
+
+    const reset = () => {
+        setTitle("");
+        setGenre(ResourceGenre.getAllGenres()[0]);
+        setDescription("");
+        setPrompt("");
     }
 
     return(
@@ -68,7 +86,7 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                         className="grow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none mb-4"
                         placeholder="プロンプト..."
                         defaultValue={toUpdateResource?.prompt ?? ""}
-                        onChange={(e) => setPrompt(e.target.value)}
+                        onChange={(e) => { setPrompt(e.target.value); }}
                     ></textarea>
 
                     <div className="w-full flex justify-end gap-2">
@@ -86,6 +104,7 @@ const EditResourceDialog : React.FC<ResourceDialogProps> = ({
                                 description: description,
                                 prompt: prompt
                             });
+                            reset();
                           }}>
                           更新
                         </button>
