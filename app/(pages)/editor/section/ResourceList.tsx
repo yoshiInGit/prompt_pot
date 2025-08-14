@@ -16,6 +16,7 @@ import RenameDialog from "../modules/RenameFolderDialog";
 import ConfirmDialog from "../modules/ConifrmDialog";
 import EditResourceDialog from "../modules/EditResourceDialog";
 import LoadingSpinner from "../../_common/Loading_spinner";
+import { addPrompt } from "@/app/action_state/_action/prompt";
 
 const ResourceList = () => {
     // リソースリスト
@@ -82,7 +83,8 @@ const ResourceList = () => {
                     <>
                     <MdEdit size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
                         onClick={()=>{setEditResourceDialogOpen(true)}}/>
-                    <FaAngleDoubleUp size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"/>
+                    <FaAngleDoubleUp size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                        onClick={()=>{addPrompt(selectedResource ?? Resource.createEmpty())}}/>
                     </>
                 )}
                 {selectedResourceId && (
