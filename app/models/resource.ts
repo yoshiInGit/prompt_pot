@@ -44,6 +44,7 @@ export class ResourceGenre {
     }
 }
 
+
 export class Resource  {
     id: string
     title : string
@@ -69,3 +70,19 @@ export class Resource  {
         });
     }
 }
+
+
+export const sortResourcesByGenre = (resources: Resource[]): Resource[] => {
+    const genreOrder = [
+        ResourceGenreType.INSTRUCTION,
+        ResourceGenreType.CONTEXT,  
+        ResourceGenreType.FORMAT,
+        ResourceGenreType.CONSTRAINT,
+        ResourceGenreType.OTHER
+    ];
+    return resources.sort((a, b) => {
+        const genreIndexA = genreOrder.indexOf(a.genre.genre);
+        const genreIndexB = genreOrder.indexOf(b.genre.genre);
+        return genreIndexA - genreIndexB;
+    });
+} 
