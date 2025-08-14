@@ -8,6 +8,7 @@ import {restoreFolder} from "../../action_state/_action/resouce";
 import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
 import PromptArea from "./section/PromptArea";
+import { restorePrompts } from "@/app/action_state/_action/prompt";
 
 const Editor = () => {
     // データの復元
@@ -16,6 +17,7 @@ const Editor = () => {
         if(initFlag.current){
             // リソースの復元
             restoreFolder();
+            restorePrompts();
             initFlag.current = false;
         }
     }, []);
