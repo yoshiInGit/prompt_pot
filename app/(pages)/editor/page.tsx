@@ -3,7 +3,7 @@
 import {FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, useState} from "react";
 import {restoreFolder} from "../../action_state/_action/resouce";
 import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
@@ -11,13 +11,15 @@ import PromptArea from "./section/PromptArea";
 import { restorePrompts } from "@/app/action_state/_action/prompt";
 
 const Editor = () => {
+    const [restoreBasePrompt, setRestoreBasePrompt] = useState<string>("");
+
     // データの復元
     const initFlag = useRef<boolean>(true);
     useEffect(() => {
         if(initFlag.current){
             // リソースの復元
             restoreFolder();
-            restorePrompts();
+            restorePrompts({setBasePrompt:setRestoreBasePrompt});
             initFlag.current = false;
         }
     }, []);
@@ -30,7 +32,7 @@ const Editor = () => {
                 
                 {/* プロンプトエリア */}
                 <div className="w-full h-1/2 overflow-hidden flex">
-                    <PromptArea/>
+                    <PromptArea restoreBasePrompt={restoreBasePrompt}/>
                 </div>
 
                 {/* リソースエリア */}
