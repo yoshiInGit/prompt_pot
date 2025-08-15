@@ -1,9 +1,10 @@
 import { Resource, sortResourcesByGenre } from "@/app/models/resource";
 import PromptState from "../_state/prompt_state";
-import { getAdditionalPromptIds, registerAdditionalPrompt, unregisterAdditionalPrompt } from "@/app/repository/prompt";
+import { getAdditionalPromptIds, getBasePrompt, registerAdditionalPrompt, setBasePrompt, unregisterAdditionalPrompt } from "@/app/repository/prompt";
 import { getResourceById } from "@/app/repository/resources";
 
-export const restorePrompts = async () => {
+export const restorePrompts = async ({setBasePrompt}:{setBasePrompt:(prompt:string)=>void}) => {
+    // 追加プロンプトのIDを取得
     // IDを取得
     const promptIds = await getAdditionalPromptIds();
 
@@ -15,6 +16,9 @@ export const restorePrompts = async () => {
         }
     }
 
+    // ベースプロンプトを設定
+    const basePrompt = await getBasePrompt();
+    setBasePrompt(basePrompt);
 
     // ステート更新
     const promptState = PromptState.getInstance();
@@ -54,4 +58,9 @@ export const removePrompt = async ({resourceId}:{resourceId:string}) => {
 
     // データベース更新
     await unregisterAdditionalPrompt({resourceId : resourceId});
+}
+
+export const saveBasePrompt = async ({prompt}: {prompt:string}) => {
+    // データベース更新
+    await setBasePrompt(prompt)
 }

@@ -4,9 +4,11 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { Resource } from "@/app/models/resource";
 import PromptState from "@/app/action_state/_state/prompt_state";
-import { removePrompt } from "@/app/action_state/_action/prompt";
+import { removePrompt, saveBasePrompt } from "@/app/action_state/_action/prompt";
+import { IoIosSave } from "react-icons/io";
 
-const PromptArea = () => {
+const PromptArea = ({restoreBasePrompt}:{restoreBasePrompt:string}) => {
+    const [basePrompt, setBasePrompt] = useState<string>("");
     const [additionalPrompts, setAdditionalPrompts] = useState<Resource[]>([]);
 
     useEffect(() => {
@@ -22,6 +24,13 @@ const PromptArea = () => {
         }
     }, []);
 
+    //　初期ベースプロンプトの復元
+    useEffect(() => {
+        if(restoreBasePrompt){
+            setBasePrompt(restoreBasePrompt);
+        }
+    }, [restoreBasePrompt]);
+
   return (
     <>
     {/* ベースプロンプト */}
@@ -29,11 +38,16 @@ const PromptArea = () => {
         <div className="flex items-center mb-2">
             <GoCpu size={16}/>
             <div className="text-gray-600 ml-2">Base Prompt</div>
+            <div className="grow"/>
+            <IoIosSave size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"
+                onClick={()=>{saveBasePrompt({prompt:basePrompt})}}/>
         </div>
 
         <textarea 
                 className="flex-1 bg-white border text-sm border-white focus:border-white focus:outline-none resize-none rounded"
-                placeholder="このTextAreaはflexコンテナ内で最大限大きくなります..."
+                placeholder="例）小学3年生でも理解できる言葉で、地球温暖化について説明してください。専門用語は使わず、具体..."
+                defaultValue={basePrompt}
+                onChange={(e) => {setBasePrompt(e.target.value);}}
         ></textarea>
 
     </div>
