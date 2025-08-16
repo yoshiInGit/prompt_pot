@@ -9,9 +9,16 @@ import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
 import PromptArea from "./section/PromptArea";
 import { restorePrompts } from "@/app/action_state/action/prompt";
+import LoadingSpinner from "../_common/Loading_spinner";
+import LoadingState from "@/app/action_state/state/loading_state";
+import ResultState from "@/app/action_state/state/result_state";
+import Markdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
 
 const Editor = () => {
     const [restoreBasePrompt, setRestoreBasePrompt] = useState<string>("");
+    const [result, setResult] = useState<string>("");
+    const [isResultLoading, setIsResultLoading] = useState<boolean>(false);
 
     // データの復元
     const initFlag = useRef<boolean>(true);
@@ -21,6 +28,29 @@ const Editor = () => {
             restoreFolder();
             restorePrompts({setBasePrompt:setRestoreBasePrompt});
             initFlag.current = false;
+        }
+    }, []);
+
+
+    // 結果のロード、結果の状態を監視
+    useEffect(() => {
+        const updateResultLoading = ({isLoading}: {isLoading: boolean}) => {
+            setIsResultLoading(isLoading);
+        }
+
+        const updateResult = ({result}: {result: string}) => {
+            setResult(result);
+        }
+        
+        const loadingState = LoadingState.getInstance();
+        loadingState.subscribeResult(updateResultLoading);
+
+        const resultState = ResultState.getInstance();
+        resultState.subscribe(updateResult);
+
+        return () => {
+            loadingState.unsubscribeResult(updateResultLoading);
+            resultState.unsubscribe(updateResult);
         }
     }, []);
 
@@ -46,8 +76,8 @@ const Editor = () => {
             </div>
 
             {/* プレビュー画面 */}
-            <div className="w-4/10 h-full overflow-hidden flex flex-col">
-                <div className="flex-grow bg-white shadow-md p-4 rounded flex flex-col gap-4">
+            <div className="relative w-4/10 h-full overflow-hidden flex flex-col">
+                <div className="flex-grow bg-white shadow-md p-4 rounded flex flex-col gap-4 overflow-y-scroll">
                         <div className="flex items-center gap-4">
                             <div className="text-gray-600 font-bold">Preview</div>
                             <div className="grow"/>
@@ -57,9 +87,16 @@ const Editor = () => {
 
                         <PrevHighlightCard />
 
-                        <div className="grow w-full">
-                            
+                        <div className="grow w-full leading-relaxed text-gray-800 prose">
+                            <Markdown remarkPlugins={[remarkGfm]}>
+                                {result}
+                            </Markdown>
+
+                            {/* やみやすくするようにフッター */}
+                            <div className="h-100"/>
                         </div>
+
+                    {isResultLoading && <LoadingSpinner/>}
                 </div>
             </div>
         </div>

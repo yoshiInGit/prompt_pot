@@ -47,6 +47,23 @@ class LoadingState {
     this.resourceListSubscribers.forEach(sub => sub({isLoading:this.isResourceListLoading}));
   }
 
+  // 結果のロード中かどうか
+  public isResultLoading : boolean = false; // 結果のロード中かどうか
+
+  private resultSubscribers : OnChange[] = []
+
+  public subscribeResult = (onChange : OnChange) => {
+    this.resultSubscribers.push(onChange);
+  }
+
+  public unsubscribeResult = (onChange : OnChange) => {
+    this.resultSubscribers = this.resultSubscribers.filter(sub => sub !== onChange);
+  }
+
+  public notifyResultSub = () => {
+    this.resultSubscribers.forEach(sub => sub({isLoading:this.isResultLoading}));
+  }
+
 }
 
 export default LoadingState;

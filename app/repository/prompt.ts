@@ -35,6 +35,20 @@ export const getBasePrompt = async (): Promise<string> => {
     });
 }
 
+export const getResult = async (): Promise<string> => {
+    return await onTryFirebase(async () => {
+        const promptDocRef = doc(db, "base", "prompts", "file", FileID);
+        const promptSnapshot = await getDoc(promptDocRef);
+        if (!promptSnapshot.exists()) {
+            console.error(`ドキュメントが存在しません`);
+            return "";
+        }
+
+        const data = promptSnapshot.data();
+        return data.result || "";
+    });
+}
+
 //コマンド系
 export const registerAdditionalPrompt = async ({resourceId}: {resourceId : string}) => {
     onTryFirebase(async()=>{
@@ -60,6 +74,15 @@ export const setBasePrompt = async (prompt : string) => {
         const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
         updateDoc(promptDocRef, {
             base_prompt: prompt
+        });
+    })
+}   
+
+export const setResult = async (result: string) => {
+    onTryFirebase(async()=>{
+        const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
+        updateDoc(promptDocRef, {
+            result: result
         });
     })
 }   

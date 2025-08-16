@@ -4,8 +4,9 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { Resource } from "@/app/models/resource";
 import PromptState from "@/app/action_state/state/prompt_state";
-import { removePrompt, saveBasePrompt } from "@/app/action_state/action/prompt";
+import { executePrompt, removePrompt, saveBasePrompt } from "@/app/action_state/action/prompt";
 import { IoIosSave } from "react-icons/io";
+import { exec } from "child_process";
 
 const PromptArea = ({restoreBasePrompt}:{restoreBasePrompt:string}) => {
     const [basePrompt, setBasePrompt] = useState<string>("");
@@ -74,7 +75,8 @@ const PromptArea = ({restoreBasePrompt}:{restoreBasePrompt:string}) => {
     </div>
 
     {/* 実行ボタン */}
-    <div className="w-1/25 h-full flex items-center justify-center bg-white shadow-md mr-2 rounded-r-lg cursor-pointer">
+    <div className="w-1/25 h-full flex items-center justify-center bg-white shadow-md mr-2 rounded-r-lg cursor-pointer"
+        onClick={() =>{executePrompt({basePrompt: basePrompt})}}>
         <MdKeyboardDoubleArrowRight size={28} color="gray"/>
     </div>
   </>
