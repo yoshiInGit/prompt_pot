@@ -2,7 +2,6 @@
 
 import {FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
-import PrevHighlightCard from "./modules/PrevHighlightCard";
 import { useEffect, useRef, useState} from "react";
 import {restoreFolder} from "../../action_state/action/resource";
 import ResourceList from "./section/ResourceList";
@@ -84,8 +83,6 @@ const Editor = () => {
                             <FaCopy size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
                             <IoMdDownload size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
                         </div>
-
-                        <PrevHighlightCard />
 
                         <div className="grow w-full leading-relaxed text-gray-800 prose">
                             <Markdown remarkPlugins={[remarkGfm]}>
