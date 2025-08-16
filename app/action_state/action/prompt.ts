@@ -1,5 +1,5 @@
 import { Resource, sortResourcesByGenre } from "@/app/models/resource";
-import PromptState from "../_state/prompt_state";
+import PromptState from "../state/prompt_state";
 import { getAdditionalPromptIds, getBasePrompt, registerAdditionalPrompt, setBasePrompt, unregisterAdditionalPrompt } from "@/app/repository/prompt";
 import { getResourceById } from "@/app/repository/resources";
 
