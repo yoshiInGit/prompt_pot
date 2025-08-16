@@ -22,3 +22,6 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
+
+// Initialize the Gemini Developer API backend service
+export const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
