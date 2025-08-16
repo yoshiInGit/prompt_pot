@@ -3,8 +3,8 @@ import AdditionalPromptCard from "../modules/AdditionalPromptCard";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { Resource } from "@/app/models/resource";
-import PromptState from "@/app/action_state/_state/prompt_state";
-import { removePrompt, saveBasePrompt } from "@/app/action_state/_action/prompt";
+import PromptState from "@/app/action_state/state/prompt_state";
+import { removePrompt, saveBasePrompt } from "@/app/action_state/action/prompt";
 import { IoIosSave } from "react-icons/io";
 
 const PromptArea = ({restoreBasePrompt}:{restoreBasePrompt:string}) => {

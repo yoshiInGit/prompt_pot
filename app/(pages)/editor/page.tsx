@@ -4,11 +4,11 @@ import {FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
 import { useEffect, useRef, useState} from "react";
-import {restoreFolder} from "../../action_state/_action/resouce";
+import {restoreFolder} from "../../action_state/action/resouce";
 import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
 import PromptArea from "./section/PromptArea";
-import { restorePrompts } from "@/app/action_state/_action/prompt";
+import { restorePrompts } from "@/app/action_state/action/prompt";
 
 const Editor = () => {
     const [restoreBasePrompt, setRestoreBasePrompt] = useState<string>("");

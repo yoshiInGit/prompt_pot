@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById, updateResource} from '@/app/repository/resources';
 import { File, Folder } from '@/app/models/directory';
-import LoadingState from '../_state/loading_state';
-import ResourceState from '../_state/resouce_state';
+import LoadingState from '../state/loading_state';
+import ResourceState from '../state/resouce_state';
 import { Resource, ResourceGenre, ResourceGenreType, sortResourcesByGenre } from '@/app/models/resource';
-import PromptState from '../_state/prompt_state';
+import PromptState from '../state/prompt_state';
 
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{

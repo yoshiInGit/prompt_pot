@@ -1,6 +1,6 @@
-import { addFile, addFolder, changeResourceName, editResource, openFolder, removeFile, removeFolder, selectFile } from "@/app/action_state/_action/resouce";
-import LoadingState from "@/app/action_state/_state/loading_state";
-import ResourceState from "@/app/action_state/_state/resouce_state";
+import { addFile, addFolder, changeResourceName, editResource, openFolder, removeFile, removeFolder, selectFile } from "@/app/action_state/action/resouce";
+import LoadingState from "@/app/action_state/state/loading_state";
+import ResourceState from "@/app/action_state/state/resouce_state";
 import { Folder, File } from "@/app/models/directory";
 import { Resource, ResourceGenre } from "@/app/models/resource";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import RenameDialog from "../modules/RenameFolderDialog";
 import ConfirmDialog from "../modules/ConifrmDialog";
 import EditResourceDialog from "../modules/EditResourceDialog";
 import LoadingSpinner from "../../_common/Loading_spinner";
-import { addPrompt } from "@/app/action_state/_action/prompt";
+import { addPrompt } from "@/app/action_state/action/prompt";
 
 const ResourceList = () => {
     // リソースリスト
