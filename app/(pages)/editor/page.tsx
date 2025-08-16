@@ -4,7 +4,7 @@ import {FaCopy } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import PrevHighlightCard from "./modules/PrevHighlightCard";
 import { useEffect, useRef, useState} from "react";
-import {restoreFolder} from "../../action_state/action/resouce";
+import {restoreFolder} from "../../action_state/action/resource";
 import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
 import PromptArea from "./section/PromptArea";

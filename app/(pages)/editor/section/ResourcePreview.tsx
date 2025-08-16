@@ -1,4 +1,4 @@
-import ResourceState from "@/app/action_state/state/resouce_state";
+import ResourceState from "@/app/action_state/state/resource_state";
 import { Folder, File } from "@/app/models/directory";
 import { Resource } from "@/app/models/resource";
 import { useEffect, useState } from "react";

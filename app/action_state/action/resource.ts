@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById, updateResource} from '@/app/repository/resources';
 import { File, Folder } from '@/app/models/directory';
 import LoadingState from '../state/loading_state';
-import ResourceState from '../state/resouce_state';
+import ResourceState from '../state/resource_state';
 import { Resource, ResourceGenre, ResourceGenreType, sortResourcesByGenre } from '@/app/models/resource';
 import PromptState from '../state/prompt_state';
 
