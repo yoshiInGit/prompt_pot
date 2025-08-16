@@ -72,6 +72,8 @@ export class Resource  {
 }
 
 
+// メソッド
+
 export const sortResourcesByGenre = (resources: Resource[]): Resource[] => {
     const genreOrder = [
         ResourceGenreType.INSTRUCTION,
@@ -86,3 +88,22 @@ export const sortResourcesByGenre = (resources: Resource[]): Resource[] => {
         return genreIndexA - genreIndexB;
     });
 } 
+
+export const groupResourcesByGenre = (
+  resources: Resource[]
+): Record<ResourceGenreType, Resource[]> => {
+  return resources.reduce<Record<ResourceGenreType, Resource[]>>((acc, resource) => {
+    const key = resource.genre.genre; // ResourceGenreType
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(resource);
+    return acc;
+  }, {
+    [ResourceGenreType.INSTRUCTION]: [],
+    [ResourceGenreType.CONTEXT]: [],
+    [ResourceGenreType.FORMAT]: [],
+    [ResourceGenreType.CONSTRAINT]: [],
+    [ResourceGenreType.OTHER]: []
+  });
+};

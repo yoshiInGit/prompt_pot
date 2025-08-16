@@ -1,7 +1,77 @@
-import { Resource, sortResourcesByGenre } from "@/app/models/resource";
+import { groupResourcesByGenre, Resource, sortResourcesByGenre } from "@/app/models/resource";
 import PromptState from "../state/prompt_state";
-import { getAdditionalPromptIds, getBasePrompt, registerAdditionalPrompt, setBasePrompt, unregisterAdditionalPrompt } from "@/app/repository/prompt";
+import { getAdditionalPromptIds, getBasePrompt, getResult, registerAdditionalPrompt, setBasePrompt, setResult, unregisterAdditionalPrompt } from "@/app/repository/prompt";
 import { getResourceById } from "@/app/repository/resources";
+import { invokeGemini25Flash } from "@/app/ai/firebaseLogicAi";
+import LoadingState from "../state/loading_state";
+import ResultState from "../state/result_state";
+
+export const executePrompt = async ({basePrompt}:{basePrompt:string}) => {
+
+    console.log("Executing prompt with base:", basePrompt);
+
+    const loadingState = LoadingState.getInstance();
+    const resultState  = ResultState.getInstance();
+    const promptState  = PromptState.getInstance();
+
+    
+    loadingState.isResultLoading = true;
+    loadingState.notifyResultSub();
+
+    // プロンプトの組み立て
+    const additionalPrompts = promptState.additionalPrompts;
+    const prompt = _buildPrompt(basePrompt, additionalPrompts);
+    console.log("Constructed prompt:", prompt);
+
+    // AIにプロンプトを送信して結果を取得
+    const result = await invokeGemini25Flash(prompt);
+
+    console.log("Received result:", result);
+
+    // 結果をステートに保存
+    resultState.result = result;
+    resultState.notify();
+
+    // ローディング状態を更新
+    loadingState.isResultLoading = false;
+    loadingState.notifyResultSub();
+
+    // DBに結果を保存
+    await setResult(result);
+
+}
+
+const _buildPrompt = (basePrompt: string, additionalPrompts: Resource[]): string => {    
+    let prompt = "";
+
+    //　基本の命令を追加
+    prompt += "Execute the 'Base Prompt' but also follow the instructions specified in the 'Additional Conditions'."
+    prompt += "Please output the result in **Markdown format** with the following guidelines:\n\n- Use **headings** (\\`#\\`, \\`##\\`, \\`###\\`) to organize sections clearly.\n- Use **bullet points** or **numbered lists** for step-by-step explanations or grouped items.\n- Apply **bold** or *italic* text to highlight important points.\n- Insert proper **line breaks** and spacing for better readability.\n- Use **code blocks** (\\`\\`\\`) when showing code or commands.\n- Add **blockquotes** (>) when emphasizing key notes or tips.\n\nMake sure the final output looks **structured, visually clear, and easy to read**.";
+
+    // ベースプロンプトを追加
+    prompt += "<Base Prompt>" + basePrompt + "</Base Prompt>";
+
+    // 追加のプロンプトを追加していく
+    const groupedResources = groupResourcesByGenre(additionalPrompts);
+
+    prompt += "<Additional Condition>" 
+        
+    // 各ジャンルごとにプロンプトを追加
+    // ここでは、ジャンルごとにタグを付けてプロンプトをまとめる
+    prompt += Object.entries(groupedResources)
+        .filter(([, resources]) => resources.length > 0) // 空ジャンルはスキップ
+        .map(([genreKey, resources]) => {
+          const tagName = genreKey // タグ名
+          const inner = resources.map(r => `<>${r.prompt}</>`).join("");
+          return `<${tagName}>${inner}<${tagName}/>`;
+        })
+        .join("");
+    
+    prompt += "</Additional Condition>"
+
+    return prompt;
+
+} 
 
 export const restorePrompts = async ({setBasePrompt}:{setBasePrompt:(prompt:string)=>void}) => {
     // 追加プロンプトのIDを取得
@@ -19,6 +89,12 @@ export const restorePrompts = async ({setBasePrompt}:{setBasePrompt:(prompt:stri
     // ベースプロンプトを設定
     const basePrompt = await getBasePrompt();
     setBasePrompt(basePrompt);
+
+    // 結果を復元
+    const result = await getResult();
+    const resultState = ResultState.getInstance();
+    resultState.result = result;
+    resultState.notify();
 
     // ステート更新
     const promptState = PromptState.getInstance();
