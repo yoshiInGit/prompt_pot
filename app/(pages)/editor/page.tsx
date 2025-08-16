@@ -7,7 +7,7 @@ import {restoreFolder} from "../../action_state/action/resource";
 import ResourceList from "./section/ResourceList";
 import ResourcePreview from "./section/ResourcePreview";
 import PromptArea from "./section/PromptArea";
-import { restorePrompts } from "@/app/action_state/action/prompt";
+import { downloadResultMD, restorePrompts } from "@/app/action_state/action/prompt";
 import LoadingSpinner from "../_common/Loading_spinner";
 import LoadingState from "@/app/action_state/state/loading_state";
 import ResultState from "@/app/action_state/state/result_state";
@@ -53,6 +53,14 @@ const Editor = () => {
         }
     }, []);
 
+    const onCopy = () => {
+        navigator.clipboard.writeText(result).then(() => {
+            console.log("Copied to clipboard");
+        }).catch((error) => {
+            console.error("Failed to copy: ", error);
+        });
+    }
+
     return(
         <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
             
@@ -80,8 +88,10 @@ const Editor = () => {
                         <div className="flex items-center gap-4">
                             <div className="text-gray-600 font-bold">Preview</div>
                             <div className="grow"/>
-                            <FaCopy size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
-                            <IoMdDownload size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"/>
+                            <FaCopy size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"
+                                onClick={onCopy}/>
+                            <IoMdDownload size={20} className="text-gray-600 cursor-pointer hover:text-gray-800"
+                                onClick={downloadResultMD}/>
                         </div>
 
                         <div className="grow w-full leading-relaxed text-gray-800 prose">

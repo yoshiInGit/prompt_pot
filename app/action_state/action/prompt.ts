@@ -140,3 +140,24 @@ export const saveBasePrompt = async ({prompt}: {prompt:string}) => {
     // データベース更新
     await setBasePrompt(prompt)
 }
+
+export const downloadResultMD = async () => {
+    const resultState = ResultState.getInstance();
+    const result = resultState.result;
+
+    const blob = new Blob([result], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'result.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // revoke は少し遅らせて実行（1秒後）
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+
+}
