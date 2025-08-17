@@ -79,3 +79,30 @@ export const updateContent = async ({content}:{content: Content}) => {
         console.log(`Content with id ${content.id} to ${content}`);
     });
 }
+
+export const deleteContent = async ({contentId}:{contentId:string}) => {
+    onTryFirebase(async () => {
+        const docRef = doc(db, "base", "contents");
+        const snapshot = await getDoc(docRef);
+        if (!snapshot.exists()) {
+            console.error("Contents document does not exist");
+            return;
+        }
+
+        const contents = snapshot.data().contents || [];
+        const contentIndex = contents.findIndex((content: { id: string }) => content.id === contentId);
+        if (contentIndex === -1) {
+            console.error(`Content with id ${contentId} not found`);
+            return;
+        }
+
+        // 削除
+        contents.splice(contentIndex, 1);
+
+        // データベース更新
+        await updateDoc(docRef, {
+            "contents": contents
+        });
+        console.log(`Content with id ${contentId} deleted`);
+    });
+}

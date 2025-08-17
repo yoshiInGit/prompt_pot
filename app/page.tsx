@@ -4,12 +4,13 @@ import React, { useEffect } from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
 import ContentCard from "./modules/ContentCard"
-import { createContent, renameContent, restoreContents } from "./action_state/action/content";
+import { createContent, deleteContent, renameContent, restoreContents } from "./action_state/action/content";
 import { Content } from "./models/contents";
 import ContentState from "./action_state/state/content_state";
 import NewContentDialog from "./modules/NewContentDialog";
 import { MdDelete, MdEdit } from "react-icons/md";
 import RenameDialog from "./modules/RenameContentDialog";
+import ConfirmDialog from "./(pages)/_common/ConfirmDialog";
 
 export default function Home() {
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
@@ -27,7 +28,7 @@ export default function Home() {
   useEffect(() => {
     const contentState = ContentState.getInstance();
     const updateContents = ({ contents }: { contents: Content[] }) => {
-      setContents(contents);
+      setContents([...contents]);
     }
     contentState.subscribe(updateContents);
 
@@ -39,6 +40,7 @@ export default function Home() {
   const [selectedContent, setSelectedContent] = React.useState<Content | null>(null);
   const [newContentDialogOpen, setNewContentDialogOpen] = React.useState<boolean>(false);
   const [editContentDialogOpen, setEditContentDialogOpen] = React.useState<boolean>(false);
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = React.useState<boolean>(false);
 
   
   // ファイルコンポーネントを一覧
@@ -104,7 +106,8 @@ export default function Home() {
             <MdEdit size={52} color="#797979" className="cursor-pointer"
               onClick={()=>{setEditContentDialogOpen(true)}}/>
 
-            <MdDelete size={52} color="#797979" className="cursor-pointer"/>
+            <MdDelete size={52} color="#797979" className="cursor-pointer"
+              onClick={()=>{setConfirmDeleteDialogOpen(true)}}/>
             
             </>}
 
@@ -134,6 +137,19 @@ export default function Home() {
           setEditContentDialogOpen(false);
         }}
       />
+
+      <ConfirmDialog
+        isOpen={confirmDeleteDialogOpen}
+        title="コンテンツを削除する"
+        message="本当に削除しますか？復元はできません。"
+        onConfirm={() => { 
+          setConfirmDeleteDialogOpen(false);
+          deleteContent({contentId: selectedContent?.id ?? ""});
+          setSelectedContent(null);
+        }} 
+        onCancel={function (): void {
+          setConfirmDeleteDialogOpen(false);
+        } }/>
 
     </div>
   );
