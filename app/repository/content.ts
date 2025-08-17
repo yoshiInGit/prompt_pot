@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, deleteDoc, doc, getDoc, runTransaction, setDoc, updateDoc } from "firebase/firestore";
 import { onTryFirebase } from "./helper"
 import { db } from "../firebase";
 import { Content } from "../models/contents";
@@ -39,14 +39,25 @@ export const getAllContents = async ():Promise<Content[]>=> {
 // コマンド系
 export const addContent = async ({content}:{content:Content}) => {
     onTryFirebase(async () => {
-        const docRef = doc(db, "base", "contents");
+        const contentDocRef = doc(db, "base", "contents");
+        const promptDocRef  = doc(db, "base", "prompts", "file", content.id);
 
-        await updateDoc(docRef, {
-            "contents": arrayUnion({
-                id:   content.id,
-                name: content.name,
-            })
-        });
+        await runTransaction(db, async (transaction) => {
+          // contents フィールドに arrayUnion で追加
+          transaction.update(contentDocRef, {
+            contents: arrayUnion({
+              id: content.id,
+              name: content.name,
+            }),
+          });
+      
+          // prompts/{file}/{id} に新しいドキュメント作成
+          transaction.set(promptDocRef, {
+            base_prompt: "",
+            additional_resource_ids: [],
+            result: "",
+          });
+        });       
     });
 }
 
@@ -99,10 +110,16 @@ export const deleteContent = async ({contentId}:{contentId:string}) => {
         // 削除
         contents.splice(contentIndex, 1);
 
-        // データベース更新
-        await updateDoc(docRef, {
-            "contents": contents
+        await runTransaction(db, async (transaction) => {
+                // contents 更新
+            transaction.update(docRef, {
+                contents: contents,
+            });
+            console.log(`Content with id ${contentId} deleted`);
+
+            // prompt 削除
+            const promptDocRef = doc(db, "base", "prompts", "file", contentId);
+            transaction.delete(promptDocRef);
         });
-        console.log(`Content with id ${contentId} deleted`);
     });
 }
