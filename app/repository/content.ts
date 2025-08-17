@@ -25,7 +25,10 @@ export const getAllContents = async ():Promise<Content[]>=> {
             }
 
             // Contentクラスのインスタンスを作成
-            const contentInstance = new Content(content.id, content.name);
+            const contentInstance = new Content({
+                id: content.id,
+                name: content.name
+            });
             contents.push(contentInstance);
         }
 
@@ -34,14 +37,14 @@ export const getAllContents = async ():Promise<Content[]>=> {
 }
 
 // コマンド系
-export const addContent = async ({name, id}:{name:string, id:string}) => {
+export const addContent = async ({content}:{content:Content}) => {
     onTryFirebase(async () => {
         const docRef = doc(db, "base", "contents");
 
         await updateDoc(docRef, {
             "contents": arrayUnion({
-                id:   id,
-                name: name,
+                id:   content.id,
+                name: content.name,
             })
         });
     });

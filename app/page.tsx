@@ -4,9 +4,10 @@ import React, { useEffect } from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
 import ContentCard from "./modules/ContentCard"
-import { restoreContents } from "./action_state/action/content";
+import { createContent, restoreContents } from "./action_state/action/content";
 import { Content } from "./models/contents";
 import ContentState from "./action_state/state/content_state";
+import NewContentDialog from "./modules/NewContentDialog";
 
 export default function Home() {
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
@@ -32,6 +33,8 @@ export default function Home() {
       contentState.unsubscribe(updateContents);
     }
   }, []);
+
+  const [newContentDialogOpen, setNewContentDialogOpen] = React.useState<boolean>(false);
 
   
   // ファイルコンポーネントを一覧
@@ -87,10 +90,22 @@ export default function Home() {
 
           {/* サイドバー */}
           <div className="relative w-1/12 h-full p-4 flex flex-col-reverse gap-8 justify-start items-center">
-            <AiFillFileAdd size={64} color="#797979" className="cursor-pointer"/>
+            <AiFillFileAdd size={64} color="#797979" className="cursor-pointer"
+              onClick={()=>{setNewContentDialogOpen(true)}}/>
           </div>
         </div>
       </div>
+
+      <NewContentDialog 
+        isOpen={newContentDialogOpen} 
+        onClose={function (): void {
+          setNewContentDialogOpen(false);
+        }} 
+        onCreate={function (name: string): void {
+          createContent({name: name});
+          setNewContentDialogOpen(false);
+        }}/>
+      
 
     </div>
   );
