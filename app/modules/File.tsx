@@ -46,7 +46,7 @@ const File: React.FC<FileProps> = ({
     return (
         <div className="w-1/8 relative cursor-pointer flex flex-col justify-center items-center"
              onClick={handleClick}>
-            <FaFile color="#797979" size={72}/>
+            <FaFile color="#797979" size={64}/>
             <div className="text-gray-700 mt-2">{name}</div>
         </div>
     )

@@ -12,6 +12,7 @@ export default function Home() {
   const [folderData, setFolderData] = React.useState([1,2,3,4,5,6,7,8,9,10]);
   const [fileData, setFileData] = React.useState([1,1,1,1,1,1,1,1,1,1,1]);
 
+
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
 
   // フォルダコンポーネントを一覧
@@ -47,6 +48,7 @@ export default function Home() {
 
      return folderEl;
   }
+  
   // ファイルコンポーネントを一覧
   const fileEls = () => {
     const fileEl = [];
@@ -101,8 +103,8 @@ export default function Home() {
 
           {/* サイドバー */}
           <div className="relative w-1/12 h-full p-4 flex flex-col-reverse gap-8 justify-start items-center">
-            <AiFillFileAdd size={70} color="#797979" className="cursor-pointer"/>
-            <AiFillFolderAdd size={80} color="#797979" className="cursor-pointer"/>
+            <AiFillFileAdd size={64} color="#797979" className="cursor-pointer"/>
+            <AiFillFolderAdd size={72} color="#797979" className="cursor-pointer"/>
           </div>
         </div>
       </div>
