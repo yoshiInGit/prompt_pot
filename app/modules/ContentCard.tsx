@@ -5,12 +5,14 @@ import { RiAiGenerateText } from "react-icons/ri";
 interface ContentCardProps {
   onClick?: () => void;
   onDoubleClick?: () => void;
+  isSelected?: boolean;
   name?: string;
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({
   onClick,
   onDoubleClick,
+  isSelected = false,
   name = "File Name",
 }) => {
 
@@ -44,9 +46,10 @@ const ContentCard: React.FC<ContentCardProps> = ({
   };
 
     return (
-        <div className="w-1/8 relative cursor-pointer flex flex-col justify-center items-center"
+        <div className={`w-1/8 relative cursor-pointer flex flex-col justify-center items-center p-2 rounded`}
              onClick={handleClick}>
-            <RiAiGenerateText color="#797979" size={58}/>
+            <RiAiGenerateText color="#797979" size={58}
+              style={{color: isSelected ? '#292929' : ''}}/>
             <div className="text-gray-700 mt-2">{name}</div>
         </div>
     )

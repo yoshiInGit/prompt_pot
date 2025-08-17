@@ -1,4 +1,4 @@
-import { getAllContents } from "@/app/repository/content";
+import { getAllContents, updateContent } from "@/app/repository/content";
 import ContentState from "../state/content_state";
 import LoadingState from "../state/loading_state";
 import { addContent} from "@/app/repository/content";
@@ -38,6 +38,31 @@ export const createContent = async ({name}:{name:string}) => {
     // ステートに追加
     contentState.contents.push(content);
     contentState.notify();
+
+    loadingState.isContentLoading = false;
+    loadingState.notifyContentSub();
+}
+
+export const renameContent = async ({contentId, name}:{contentId:string, name:string}) => {
+    const loadingState = LoadingState.getInstance();
+    const contentState = ContentState.getInstance();
+
+    loadingState.isContentLoading = true;
+    loadingState.notifyContentSub();
+
+    // DBの更新
+    await updateContent({content: new Content({id: contentId, name: name})});
+
+    // コンテンツの名前を更新
+    const contentIndex = contentState.contents.findIndex(content => content.id === contentId);
+    if (contentIndex !== -1) {
+        contentState.contents[contentIndex].name = name;
+        contentState.notify();
+    } else {
+        console.error(`Content with id ${contentId} not found`);
+    }
+    contentState.notify();
+
 
     loadingState.isContentLoading = false;
     loadingState.notifyContentSub();
