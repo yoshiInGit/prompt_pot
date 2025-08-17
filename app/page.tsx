@@ -1,70 +1,55 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
-import File from "./modules/File"
-import Folder from "./modules/Folder"
+import ContentCard from "./modules/ContentCard"
+import { restoreContents } from "./action_state/action/content";
+import { Content } from "./models/contents";
+import ContentState from "./action_state/state/content_state";
 
 export default function Home() {
-
-  // TODO 仮のフォルダデータとファイルデータ
-  const [folderData, setFolderData] = React.useState([1,2,3,4,5,6,7,8,9,10]);
-  const [fileData, setFileData] = React.useState([1,1,1,1,1,1,1,1,1,1,1]);
-
-
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
 
-  // フォルダコンポーネントを一覧
-  const folderEls = () =>{
-     const folderEl = [];
-     
-     for(let i=0; i<folderData.length; i+=COL_NUM){
-        let row = [];
-        for(let j=0; j<COL_NUM; j++){
-          
-          // 左詰めになるように空の要素を挿入
-          if(i+j>=folderData.length){
-            row.push(<div className="w-1/8 h-full"/>)
-            continue
-          }
+  const initFlag = React.useRef<boolean>(true);
+  useEffect(() => {
+    if (initFlag.current) {
+      restoreContents();
+      initFlag.current = false;
+    }
+  }, []);
 
-          row.push(
-            <Folder
-              key={i+j}
-              name={"Folder " + (i+j+1)}
-              onClick={() => console.log(`Clicked`)}
-              onDoubleClick={() => console.log(`Double Clicked `)}
-            />
-          );
-        }
 
-        folderEl.push(
-          <div className="w-full flex justify-start items-center ">
-            {row}
-          </div>
-        );
-     }
+  const [contents, setContents] = React.useState<Content[]>([]);
+  useEffect(() => {
+    const contentState = ContentState.getInstance();
+    const updateContents = ({ contents }: { contents: Content[] }) => {
+      setContents(contents);
+    }
+    contentState.subscribe(updateContents);
 
-     return folderEl;
-  }
+    return () => {
+      contentState.unsubscribe(updateContents);
+    }
+  }, []);
+
   
   // ファイルコンポーネントを一覧
-  const fileEls = () => {
-    const fileEl = [];
+  const contentEls = () => {
+    const contentEl = [];
     
-    for(let i=0; i<fileData.length; i+=COL_NUM){
+    for(let i=0; i<contents.length; i+=COL_NUM){
       let row = [];
       for(let j=0; j<COL_NUM; j++){
           // 左詰めになるように空の要素を挿入
-          if(i+j>=folderData.length){
-            row.push(<div className="w-1/8 h-full"/>)
+          if(i+j>=contents.length){
+            row.push(<div className="w-1/8 h-full" key={i*COL_NUM+j}/>)
             continue
           }
 
         row.push(
-          <File
-            key={i+j}
+          <ContentCard
+            key={contents[i+j].id}
             name={"File " + (i+j+1)}
             onClick={() => console.log(`Clicked`)}
             onDoubleClick={() => console.log(`Double Clicked `)}
@@ -72,12 +57,12 @@ export default function Home() {
         );
       }
 
-      fileEl.push(
-        <div className="w-full flex justify-start items-center ">
+      contentEl.push(
+        <div className="w-full flex justify-start items-center" key={`row-${i}`}>
           {row}
         </div>);
     }
-    return fileEl;
+    return contentEl;
   }
 
 
@@ -96,15 +81,13 @@ export default function Home() {
           {/* ファイル＆フォルダ */}
           <div className="relative w-11/12 h-full p-2 flex flex-col gap-8 justify-start items-start ">
             
-            {folderEls()}
-            {fileEls()}
+            {contentEls()}
 
           </div>
 
           {/* サイドバー */}
           <div className="relative w-1/12 h-full p-4 flex flex-col-reverse gap-8 justify-start items-center">
             <AiFillFileAdd size={64} color="#797979" className="cursor-pointer"/>
-            <AiFillFolderAdd size={72} color="#797979" className="cursor-pointer"/>
           </div>
         </div>
       </div>
