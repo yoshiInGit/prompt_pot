@@ -3,12 +3,11 @@ import { Resource } from "../models/resource";
 import { onTryFirebase } from "./helper";
 import { db } from "../firebase";
 
-const FileID = "ysMm1oQEpjcrSX5NtbqE" // TODO: これは仮のIDです。実際のファイルIDに置き換えてください。
 
 // クエリ系
-export const getAdditionalPromptIds = async (): Promise<string[]> => {
+export const getAdditionalPromptIds = async ({contentId}:{contentId:string}): Promise<string[]> => {
     return await onTryFirebase(async () => {
-        const promptDocRef = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef = doc(db, "base", "prompts", "file", contentId);
         const promptSnapshot = await getDoc(promptDocRef);
         
           if (!promptSnapshot.exists()) {
@@ -21,9 +20,9 @@ export const getAdditionalPromptIds = async (): Promise<string[]> => {
     });
 }
 
-export const getBasePrompt = async (): Promise<string> => {
+export const getBasePrompt = async ({contentId}:{contentId:string}): Promise<string> => {
     return await onTryFirebase(async () => {
-        const promptDocRef = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef = doc(db, "base", "prompts", "file", contentId);
         const promptSnapshot = await getDoc(promptDocRef);
         if (!promptSnapshot.exists()) {
             console.error(`ドキュメントが存在しません`);
@@ -35,9 +34,9 @@ export const getBasePrompt = async (): Promise<string> => {
     });
 }
 
-export const getResult = async (): Promise<string> => {
+export const getResult = async ({contentId}:{contentId:string}): Promise<string> => {
     return await onTryFirebase(async () => {
-        const promptDocRef = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef = doc(db, "base", "prompts", "file", contentId);
         const promptSnapshot = await getDoc(promptDocRef);
         if (!promptSnapshot.exists()) {
             console.error(`ドキュメントが存在しません`);
@@ -50,9 +49,9 @@ export const getResult = async (): Promise<string> => {
 }
 
 //コマンド系
-export const registerAdditionalPrompt = async ({resourceId}: {resourceId : string}) => {
+export const registerAdditionalPrompt = async ({resourceId, contentId}: {resourceId : string, contentId:string}) => {
     onTryFirebase(async()=>{
-        const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef   = doc(db, "base", "prompts", "file", contentId);
                 
         updateDoc(promptDocRef, {
             additional_resource_ids: arrayUnion(resourceId)
@@ -60,27 +59,27 @@ export const registerAdditionalPrompt = async ({resourceId}: {resourceId : strin
     })
 }
 
-export const unregisterAdditionalPrompt = async ({resourceId}:{resourceId:string}) => {
+export const unregisterAdditionalPrompt = async ({resourceId, contentID}:{resourceId:string, contentID:string}) => {
     onTryFirebase(async()=>{
-        const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef   = doc(db, "base", "prompts", "file", contentID);
         updateDoc(promptDocRef, {
             additional_resource_ids: arrayRemove(resourceId)
         });
     })
 }
 
-export const setBasePrompt = async (prompt : string) => {
+export const setBasePrompt = async ({prompt, contentId} : {prompt:string, contentId:string}) => {
     onTryFirebase(async()=>{
-        const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef   = doc(db, "base", "prompts", "file", contentId);
         updateDoc(promptDocRef, {
             base_prompt: prompt
         });
     })
 }   
 
-export const setResult = async (result: string) => {
+export const setResult = async ({result, contentId}: {result : string, contentId:string}) => {
     onTryFirebase(async()=>{
-        const promptDocRef   = doc(db, "base", "prompts", "file", FileID);
+        const promptDocRef   = doc(db, "base", "prompts", "file", contentId);
         updateDoc(promptDocRef, {
             result: result
         });

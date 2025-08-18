@@ -13,22 +13,34 @@ import LoadingState from "@/app/action_state/state/loading_state";
 import ResultState from "@/app/action_state/state/result_state";
 import Markdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
+import { useSearchParams } from "next/navigation";
+
 
 const Editor = () => {
+    const searchParams = useSearchParams();
+    const id = searchParams.get('id');
+
+
     const [restoreBasePrompt, setRestoreBasePrompt] = useState<string>("");
     const [result, setResult] = useState<string>("");
     const [isResultLoading, setIsResultLoading] = useState<boolean>(false);
 
-    // データの復元
+    // リソースの復元
     const initFlag = useRef<boolean>(true);
     useEffect(() => {
         if(initFlag.current){
             // リソースの復元
             restoreFolder();
-            restorePrompts({setBasePrompt:setRestoreBasePrompt});
             initFlag.current = false;
         }
     }, []);
+
+    // プロンプトの復元
+    useEffect(() => {
+        if(id){
+            restorePrompts({setBasePrompt:setRestoreBasePrompt, contentID:id});
+        }
+    }, [id]);
 
 
     // 結果のロード、結果の状態を監視

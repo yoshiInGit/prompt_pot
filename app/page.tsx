@@ -11,8 +11,11 @@ import NewContentDialog from "./modules/NewContentDialog";
 import { MdDelete, MdEdit } from "react-icons/md";
 import RenameDialog from "./modules/RenameContentDialog";
 import ConfirmDialog from "./(pages)/_common/ConfirmDialog";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
 
   const initFlag = React.useRef<boolean>(true);
@@ -61,7 +64,9 @@ export default function Home() {
             key={contents[i+j].id}
             name={contents[i+j].name}
             onClick={() => {setSelectedContent(contents[i+j])}}
-            onDoubleClick={() => console.log(`Double Clicked `)}
+            onDoubleClick={() => {
+              router.push(`/editor?id=${contents[i+j].id}`);
+            }}
             isSelected={selectedContent?.id === contents[i+j].id}
           />
         );

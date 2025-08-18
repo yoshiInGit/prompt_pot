@@ -46,6 +46,8 @@ class ContentState {
         this.subscribers.forEach(sub => sub({contents: this.contents}));
     }
 
+
+    public editingContentId: string | null = null; // 編集中のコンテンツID
 }
 
 export default ContentState;
