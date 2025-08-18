@@ -13,7 +13,7 @@ import ResourceTile from "../modules/ResourceTile";
 import NewFolderDialog from "../modules/NewFolderDialog";
 import NewFileDialog from "../modules/NewFileDialog";
 import RenameDialog from "../modules/RenameFolderDialog";
-import ConfirmDialog from "../modules/ConfirmDialog";
+import ConfirmDialog from "../../_common/ConfirmDialog";
 import EditResourceDialog from "../modules/EditResourceDialog";
 import LoadingSpinner from "../../_common/Loading_spinner";
 import { addPrompt } from "@/app/action_state/action/prompt";

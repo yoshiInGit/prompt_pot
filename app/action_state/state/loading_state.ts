@@ -64,6 +64,24 @@ class LoadingState {
     this.resultSubscribers.forEach(sub => sub({isLoading:this.isResultLoading}));
   }
 
+  // コンテンツのロード中かどうか
+  public isContentLoading : boolean = false; // コンテンツのロード中かどうか
+
+  private contentSubscribers : OnChange[] = []
+
+  public subscribeContent = (onChange : OnChange) => {
+    this.contentSubscribers.push(onChange);
+  }
+
+  public unsubscribeContent = (onChange : OnChange) => {
+    this.contentSubscribers = this.contentSubscribers.filter(sub => sub !== onChange);
+  }
+  
+  public notifyContentSub = () => {
+    this.contentSubscribers.forEach(sub => sub({isLoading:this.isContentLoading}));
+  }
+
+
 }
 
 export default LoadingState;

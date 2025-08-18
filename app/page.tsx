@@ -1,83 +1,83 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import { AiFillFileAdd } from "react-icons/ai";
 import { AiFillFolderAdd } from "react-icons/ai";
-import File from "./modules/File"
-import Folder from "./modules/Folder"
+import ContentCard from "./modules/ContentCard"
+import { createContent, deleteContent, renameContent, restoreContents } from "./action_state/action/content";
+import { Content } from "./models/contents";
+import ContentState from "./action_state/state/content_state";
+import NewContentDialog from "./modules/NewContentDialog";
+import { MdDelete, MdEdit } from "react-icons/md";
+import RenameDialog from "./modules/RenameContentDialog";
+import ConfirmDialog from "./(pages)/_common/ConfirmDialog";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-
-  // TODO 仮のフォルダデータとファイルデータ
-  const [folderData, setFolderData] = React.useState([1,2,3,4,5,6,7,8,9,10]);
-  const [fileData, setFileData] = React.useState([1,1,1,1,1,1,1,1,1,1,1]);
-
+  const router = useRouter();
 
   const COL_NUM = 8; // 1行に表示するフォルダとファイルの数
 
-  // フォルダコンポーネントを一覧
-  const folderEls = () =>{
-     const folderEl = [];
-     
-     for(let i=0; i<folderData.length; i+=COL_NUM){
-        let row = [];
-        for(let j=0; j<COL_NUM; j++){
-          
-          // 左詰めになるように空の要素を挿入
-          if(i+j>=folderData.length){
-            row.push(<div className="w-1/8 h-full"/>)
-            continue
-          }
+  const initFlag = React.useRef<boolean>(true);
+  useEffect(() => {
+    if (initFlag.current) {
+      restoreContents();
+      initFlag.current = false;
+    }
+  }, []);
 
-          row.push(
-            <Folder
-              key={i+j}
-              name={"Folder " + (i+j+1)}
-              onClick={() => console.log(`Clicked`)}
-              onDoubleClick={() => console.log(`Double Clicked `)}
-            />
-          );
-        }
 
-        folderEl.push(
-          <div className="w-full flex justify-start items-center ">
-            {row}
-          </div>
-        );
-     }
+  const [contents, setContents] = React.useState<Content[]>([]);
+  useEffect(() => {
+    const contentState = ContentState.getInstance();
+    const updateContents = ({ contents }: { contents: Content[] }) => {
+      setContents([...contents]);
+    }
+    contentState.subscribe(updateContents);
 
-     return folderEl;
-  }
+    return () => {
+      contentState.unsubscribe(updateContents);
+    }
+  }, []);
+
+  const [selectedContent, setSelectedContent] = React.useState<Content | null>(null);
+  const [newContentDialogOpen, setNewContentDialogOpen] = React.useState<boolean>(false);
+  const [editContentDialogOpen, setEditContentDialogOpen] = React.useState<boolean>(false);
+  const [confirmDeleteDialogOpen, setConfirmDeleteDialogOpen] = React.useState<boolean>(false);
+
   
   // ファイルコンポーネントを一覧
-  const fileEls = () => {
-    const fileEl = [];
+  const contentEls = () => {
+    const contentEl = [];
     
-    for(let i=0; i<fileData.length; i+=COL_NUM){
+    for(let i=0; i<contents.length; i+=COL_NUM){
       let row = [];
       for(let j=0; j<COL_NUM; j++){
           // 左詰めになるように空の要素を挿入
-          if(i+j>=folderData.length){
-            row.push(<div className="w-1/8 h-full"/>)
+          if(i+j>=contents.length){
+            row.push(<div className="w-1/8 h-full" key={i+j}/>)
             continue
           }
 
         row.push(
-          <File
-            key={i+j}
-            name={"File " + (i+j+1)}
-            onClick={() => console.log(`Clicked`)}
-            onDoubleClick={() => console.log(`Double Clicked `)}
+          <ContentCard
+            key={contents[i+j].id}
+            name={contents[i+j].name}
+            onClick={() => {setSelectedContent(contents[i+j])}}
+            onDoubleClick={() => {
+              router.push(`/editor?id=${contents[i+j].id}`);
+            }}
+            isSelected={selectedContent?.id === contents[i+j].id}
           />
         );
       }
 
-      fileEl.push(
-        <div className="w-full flex justify-start items-center ">
+      contentEl.push(
+        <div className="w-full flex justify-start items-center" key={`row-${i}`}>
           {row}
         </div>);
     }
-    return fileEl;
+    return contentEl;
   }
 
 
@@ -96,18 +96,65 @@ export default function Home() {
           {/* ファイル＆フォルダ */}
           <div className="relative w-11/12 h-full p-2 flex flex-col gap-8 justify-start items-start ">
             
-            {folderEls()}
-            {fileEls()}
+            {contentEls()}
 
           </div>
 
           {/* サイドバー */}
           <div className="relative w-1/12 h-full p-4 flex flex-col-reverse gap-8 justify-start items-center">
-            <AiFillFileAdd size={64} color="#797979" className="cursor-pointer"/>
-            <AiFillFolderAdd size={72} color="#797979" className="cursor-pointer"/>
+
+            <AiFillFileAdd size={52} color="#797979" className="cursor-pointer"
+              onClick={()=>{setNewContentDialogOpen(true)}}/>
+
+            {selectedContent && <>
+            
+            <MdEdit size={52} color="#797979" className="cursor-pointer"
+              onClick={()=>{setEditContentDialogOpen(true)}}/>
+
+            <MdDelete size={52} color="#797979" className="cursor-pointer"
+              onClick={()=>{setConfirmDeleteDialogOpen(true)}}/>
+            
+            </>}
+
           </div>
         </div>
       </div>
+
+      <NewContentDialog 
+        isOpen={newContentDialogOpen} 
+        onClose={function (): void {
+          setNewContentDialogOpen(false);
+        }} 
+        onCreate={function (name: string): void {
+          createContent({name: name});
+          setNewContentDialogOpen(false);
+        }}/>
+
+      <RenameDialog
+        isOpen={editContentDialogOpen}
+        onClose={() => setEditContentDialogOpen(false)}
+        currentName={selectedContent?.name}
+        onRename={(name: string) => {
+          renameContent({
+            contentId: selectedContent?.id ?? "",
+            name: name
+          });
+          setEditContentDialogOpen(false);
+        }}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmDeleteDialogOpen}
+        title="コンテンツを削除する"
+        message="本当に削除しますか？復元はできません。"
+        onConfirm={() => { 
+          setConfirmDeleteDialogOpen(false);
+          deleteContent({contentId: selectedContent?.id ?? ""});
+          setSelectedContent(null);
+        }} 
+        onCancel={function (): void {
+          setConfirmDeleteDialogOpen(false);
+        } }/>
 
     </div>
   );
