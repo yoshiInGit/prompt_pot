@@ -73,7 +73,7 @@ export default function Home() {
       }
 
       contentEl.push(
-        <div className="w-full flex justify-start items-center" key={`row-${i}`}>
+        <div className="w-full flex justify-start items-center gap-4" key={`row-${i}`}>
           {row}
         </div>);
     }
@@ -82,13 +82,14 @@ export default function Home() {
 
 
   return (
-    <div className="absolute bg-gray-200 top-0 left-0 bottom-0 right-0 overflow-hidden">
+    <div className="absolute  bg-[url('/images/black_bg.jpg')] bg-cover bg-center top-0 left-0 bottom-0 right-0 overflow-hidden">
+      <div className="absolute top-0 left-0 bottom-0 right-0 bg-white/20 backdrop-blur-md">
 
       {/* コンテンツ */}
       <div className="absolute flex flex-col top-0 left-0 bottom-0 right-0 p-4">
         {/* ヘッダー */}
         <div className="relative w-full h-[2rem] flex gap-1 items-center mb-8">
-          <div className={`ml-8 text-gray-600 font-bold text-[2rem]`}>Contents</div>
+          <div className={`ml-8 text-white font-bold text-[2rem]`}>Contents</div>
         </div>
 
         {/* メインコンテンツ */}
@@ -103,20 +104,22 @@ export default function Home() {
           {/* サイドバー */}
           <div className="relative w-1/12 h-full p-4 flex flex-col-reverse gap-8 justify-start items-center">
 
-            <AiFillFileAdd size={52} color="#797979" className="cursor-pointer"
+            <AiFillFileAdd size={52} color="#FFFFFF" className="cursor-pointer"
               onClick={()=>{setNewContentDialogOpen(true)}}/>
 
             {selectedContent && <>
             
-            <MdEdit size={52} color="#797979" className="cursor-pointer"
+            <MdEdit size={52} color="#FFFFFF" className="cursor-pointer"
               onClick={()=>{setEditContentDialogOpen(true)}}/>
 
-            <MdDelete size={52} color="#797979" className="cursor-pointer"
+            <MdDelete size={52} color="#FFFFFF" className="cursor-pointer"
               onClick={()=>{setConfirmDeleteDialogOpen(true)}}/>
             
             </>}
 
           </div>
+        </div>
+
         </div>
       </div>
 

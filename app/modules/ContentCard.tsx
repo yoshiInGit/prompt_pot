@@ -46,11 +46,11 @@ const ContentCard: React.FC<ContentCardProps> = ({
   };
 
     return (
-        <div className={`w-1/8 relative cursor-pointer flex flex-col justify-center items-center p-2 rounded`}
-             onClick={handleClick}>
-            <RiAiGenerateText color="#797979" size={58}
-              style={{color: isSelected ? '#292929' : ''}}/>
-            <div className="text-gray-700 mt-2">{name}</div>
+        <div className={`bg-white/10 backdrop-blur-lg border border-white/40 rounded-2xl shadow-lg w-1/8 relative cursor-pointer flex flex-col justify-center items-center p-2 transition duration-300`}
+             onClick={handleClick}
+             style={{backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.3)' : ''}}>
+            <RiAiGenerateText color="#FFFFFF" size={58}/>
+            <div className="text-white font-bold mt-2">{name}</div>
         </div>
     )
 }
