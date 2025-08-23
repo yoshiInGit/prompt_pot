@@ -72,7 +72,7 @@ const ResourceList = () => {
             {/* ヘッダー */}
             <div className="w-full flex">
                 {currentFolderId!="base" && 
-                    <IoReturnUpBack size={32}  className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                    <IoReturnUpBack size={32}  className="text-white cursor-pointer hover:text-gray-800 p-1"
                     onClick={()=>{
                         const prevFolderId = resourceFolderHistory[resourceFolderHistory.length - 2];
                         openFolder({folderId: prevFolderId});
@@ -81,23 +81,23 @@ const ResourceList = () => {
                 <div className="grow"/>
                 {selectedResourceType=="file" && (
                     <>
-                    <MdEdit size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                    <MdEdit size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                         onClick={()=>{setEditResourceDialogOpen(true)}}/>
-                    <FaAngleDoubleUp size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                    <FaAngleDoubleUp size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                         onClick={()=>{addPrompt(selectedResource ?? Resource.createEmpty())}}/>
                     </>
                 )}
                 {selectedResourceId && (
                     <>
-                    <BiSolidRename size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                    <BiSolidRename size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                         onClick={()=>{setRenameDialogOpen(true)}}/>
-                    <MdDelete size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                    <MdDelete size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                         onClick={()=>{setDeleteDialogOpen(true)}}/>
                     </>
                 )}
-                <AiFillFileAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                <AiFillFileAdd size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                     onClick={()=>{setNewFileDialogOpen(true)}}/>
-                <AiFillFolderAdd size={32} className="text-gray-600 cursor-pointer hover:text-gray-800 p-1"
+                <AiFillFolderAdd size={32} className="text-white cursor-pointer hover:text-gray-300 p-1"
                     onClick={()=>{setNewFolderDialogOpen(true)}}/>
             </div>
             

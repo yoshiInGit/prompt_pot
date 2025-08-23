@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE, Edge レガシー */
+  scrollbar-width: none;     /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, 新Edge */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

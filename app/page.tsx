@@ -83,7 +83,7 @@ export default function Home() {
 
   return (
     <div className="absolute  bg-[url('/images/black_bg.jpg')] bg-cover bg-center top-0 left-0 bottom-0 right-0 overflow-hidden">
-      <div className="absolute top-0 left-0 bottom-0 right-0 bg-white/20 backdrop-blur-md">
+      <div className="absolute top-0 left-0 bottom-0 right-0 ">
 
       {/* コンテンツ */}
       <div className="absolute flex flex-col top-0 left-0 bottom-0 right-0 p-4">

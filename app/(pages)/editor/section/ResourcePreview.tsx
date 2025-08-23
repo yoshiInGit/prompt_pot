@@ -24,20 +24,20 @@ const ResourcePreview = () => {
     }, []);
     
     return(
-        <div className="w-3/5 h-full bg-white shadow flex flex-col rounded p-2 overflow-scroll overflow-x-hidden">
+        <div className="no-scrollbar w-3/5 h-full text-white bg-white/10 backdrop-blur-lg border border-white/40 shadow flex flex-col rounded p-2 overflow-scroll overflow-x-hidden">
             <div className="flex items-center mb-1">
                 <VscPreview size={16}/>
-                <div className="text-gray-600 ml-1">Resource Preview</div>
+                <div className="text-white ml-1">Resource Preview</div>
             </div>
             {selectedResource && 
             (<>
-                <div className="text-sm font-bold">{selectedResource.title}</div>
+                <div className="text-sm font-bold mb-1">{selectedResource.title}</div>
                 <div className="flex items-center mb-2">
                     <MdClass/>
                     <div className="text-xs font-bold">{selectedResource.genre.name()}</div>
                 </div>
                 
-                <div className="text-sm mb-2 border-y-1 border-gray-300 py-2">
+                <div className="text-sm mb-2 border-y-1 border-white py-2">
                      {selectedResource.description}
                 </div>
                 
