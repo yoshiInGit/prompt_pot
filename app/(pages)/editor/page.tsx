@@ -14,7 +14,7 @@ import ResultState from "@/app/action_state/state/result_state";
 import Markdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import { useSearchParams } from "next/navigation";
-
+import { Suspense } from "react";
 
 const Editor = () => {
     const searchParams = useSearchParams();
@@ -74,6 +74,7 @@ const Editor = () => {
     }
 
     return(
+        <Suspense fallback={<div>Loading...</div>}>
         <div className="absolute bg-[url('/images/black_bg.jpg')] bg-cover bg-center top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
             
             {/* エディター画面 */}
@@ -119,6 +120,7 @@ const Editor = () => {
                 </div>
             </div>
         </div>
+        </Suspense>
     )
 }
 
