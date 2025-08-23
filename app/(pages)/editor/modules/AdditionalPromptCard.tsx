@@ -17,18 +17,21 @@ const AdditionalPromptCard: React.FC<AdditionalPromptCardProps> = ({
     onRemove = () => {}
 }) => {
     return (
-        <div className="w-full bg-white h-20 shadow-md py-2 px-2 rounded flex flex-col cursor-pointer"
+        <div className="w-full text-white bg-white/10 backdrop-blur-lg border border-white/40 h-22 shadow-md py-2 px-2 rounded flex flex-col cursor-pointer"
             onClick={onClick}>
             <div className="flex justify-between items-center mb-1">
                 {/* カラー表示 */}
                 <div className={`w-16 h-2`}
-                    style={{backgroundColor:color}}/>
+                    style={{
+                        backgroundColor:color,
+                        boxShadow:`0 0 10px ${color}, 0 0 40px ${color},`
+                    }}/>
                 <div className="flex-grow"/>
-                <IoIosRemoveCircle size={20} color="gray" className="cursor-pointer"
+                <IoIosRemoveCircle size={20} color="white" className="cursor-pointer"
                     onClick={(e)=>{e.stopPropagation();onRemove()}}/>
             </div>
-            <div className="font-semibold text-gray-800">{name}</div>
-            <div className="w-full flex-grow text-sm text-gray-600 truncate ">
+            <div className="font-semibold text-white">{name}</div>
+            <div className="w-full flex-grow text-sm text-white truncate ">
                 {description}
             </div>
         </div>

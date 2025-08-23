@@ -74,7 +74,7 @@ const Editor = () => {
     }
 
     return(
-        <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
+        <div className="absolute bg-[url('/images/black_bg.jpg')] bg-cover bg-center top-0 left-0 bottom-0 right-0 overflow-hidden flex bg-gray-200 p-4">
             
             {/* エディター画面 */}
             <div className="w-6/10 h-full overflow-hidden flex flex-col">
@@ -96,7 +96,7 @@ const Editor = () => {
 
             {/* プレビュー画面 */}
             <div className="relative w-4/10 h-full overflow-hidden flex flex-col">
-                <div className="flex-grow bg-white shadow-md p-4 rounded flex flex-col gap-4 overflow-y-scroll">
+                <div className="flex-grow bg-white/80 backdrop-blur-lg border-2 border-white/80 p-4 rounded flex flex-col gap-4 overflow-y-scroll shadow-[0_0_10px_#ffffff,0_0_20px_#ffffff] no-scrollbar">
                         <div className="flex items-center gap-4">
                             <div className="text-gray-600 font-bold">Preview</div>
                             <div className="grow"/>

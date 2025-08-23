@@ -49,15 +49,15 @@ const ResourceTile : React.FC<ResourceTileCardProps> = ({
 
 
     return (
-        <div className={`"w-full flex items-center border-b-gray-400 border-b-1 px-2 py-3 cursor-pointer hover:bg-gray-100" ${isSelected ? "bg-gray-100" : ""}`}
+        <div className={`"w-full flex items-center border-b-white border-b-1 px-2 py-3 cursor-pointer hover:bg-gray-100/25 transition duration-300 " ${isSelected ? "bg-gray-100/35" : ""}`}
             onClick={handleClick}>
             {type === "file" ? (
-                <FaFile size={24} color="gray" className="mr-2"/>
+                <FaFile size={24} color="white" className="mr-2"/>
             ) : (
-                <FaFolder size={24} color="gray" className="mr-2"/>
+                <FaFolder size={24} color="white" className="mr-2"/>
             )}
 
-            <div className="flex-grow text-gray-600 font-semibold">{name}</div>
+            <div className="flex-grow text-white font-semibold">{name}</div>
         </div>
     );
 }
