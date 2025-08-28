@@ -100,6 +100,59 @@ AIを活用した業務のスピードと品質を飛躍的に高め、組織全
 
 
 ## 内部構成🔩
+![システム構成図](./README_IMGS/sys.png)
 
+### 🚀 技術スタック
+#### フロントエンド
 
+**Next.js** - Reactベースのフルスタックフレームワーク<br>
+**React** - コンポーネントベースのUI構築<br>
+**TypeScript** - 型安全な開発環境 <br>
+
+#### バックエンド
+
+**Firestore** - GoogleのNoSQLクラウドデータベース<br>
+
+#### AI機能
+
+**Logic AI** - Geminiベースの自然言語処理<br>
+**Google Gemini** - 高性能な生成AI
+
+#### デプロイメント
+**Vercel** - 自動デプロイとホスティング
+
+### プロンプト構成
+
+```
+Execute the 'Base Prompt' but also follow the instructions specified in the 'Additional Conditions'.
+Please output the result in **Markdown format** with the following guidelines:
+
+- Use **headings** (`#`, `##`, `###`) to organize sections clearly.
+- Use **bullet points** or **numbered lists** for step-by-step explanations or grouped items.
+- Apply **bold** or *italic* text to highlight important points.
+- Insert proper **line breaks** and spacing for better readability.
+- Use **code blocks** (```) when showing code or commands.
+- Add **blockquotes** (>) when emphasizing key notes or tips.
+
+Make sure the final output looks **structured, visually clear, and easy to read**.
+<Base Prompt>〜ここにbasePromptの内容が入ります〜</Base Prompt>
+<Additional Condition>
+  <ジャンル1>
+    <〜ジャンル1に属するプロンプト内容1〜/><〜ジャンル1に属するプロンプト内容2〜/>
+  </ジャンル1>
+  <ジャンル2>
+    <〜ジャンル2に属するプロンプト内容1〜/>
+  </ジャンル2>
+</Additional Condition>
+```
+
+#### プロンプトの構造と役割
+上記の出力プロンプトは、以下の3つの主要なセクションから構成されています。<br>
+
+基本的な命令: プロンプトの実行方法と出力形式（Markdown）に関する指示です。これにより、AIは最終的な回答を特定のフォーマットで生成します。<br>
+
+***Base Prompt***: メインとなるタスクや質問が含まれる部分です。このコードでは、basePromptという変数の中身がここに入ります。<br>
+
+***Additional Condition***: タグ（<ジャンル名>）でグループ化された追加の条件や制約が含まれます。<br>
+これにより、AIはより詳細で具体的な指示を考慮して回答を生成できます。各プロンプトは< >タグで囲まれています。
 
