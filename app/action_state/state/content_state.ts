@@ -1,4 +1,4 @@
-import { Content } from "@/app/models/contents";
+import { Content } from "@/app/infra/models/contents";
 
 type OnChange  = ({contents}:{contents:Content[]})=>void
 

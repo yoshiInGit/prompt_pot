@@ -1,5 +1,5 @@
 import { getGenerativeModel } from "firebase/ai";
-import { ai } from "../firebase";
+import { ai } from "../../firebase";
 
 
 // Create a `GenerativeModel` instance with a model that supports your use case

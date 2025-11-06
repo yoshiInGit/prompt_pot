@@ -1,7 +1,7 @@
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { Resource } from "../models/resource";
 import { onTryFirebase } from "./helper";
-import { db } from "../firebase";
+import { db } from "../../firebase";
 
 
 // クエリ系

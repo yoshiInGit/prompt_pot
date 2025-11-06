@@ -1,4 +1,4 @@
-import { Resource } from "@/app/models/resource";
+import { Resource } from "@/app/infra/models/resource";
 
 // 現在表紙しているリソース欄の状態を管理するシングルトン
 type OnChange  = ({additionalPrompts}:{additionalPrompts:Resource[]})=>void

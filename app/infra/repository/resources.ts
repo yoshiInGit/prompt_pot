@@ -1,7 +1,7 @@
 import { arrayRemove, arrayUnion, deleteField, doc, DocumentData, getDoc, runTransaction, updateDoc} from "firebase/firestore";
 import { Folder, File } from "../models/directory";
 import {Resource, ResourceGenre, ResourceGenreType} from "../models/resource";
-import { db } from "../firebase";
+import { db } from "../../firebase";
 
 //クエリ系
 const resourceCache : Map<string, Resource> = new Map();

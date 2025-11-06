@@ -1,8 +1,8 @@
-import { getAllContents, updateContent, deleteContent as repoDeleteContent } from "@/app/repository/content";
+import { getAllContents, updateContent, deleteContent as repoDeleteContent } from "@/app/infra/repository/content";
 import ContentState from "../state/content_state";
 import LoadingState from "../state/loading_state";
-import { addContent} from "@/app/repository/content";
-import { Content } from "@/app/models/contents";
+import { addContent} from "@/app/infra/repository/content";
+import { Content } from "@/app/infra/models/contents";
 import { v4 as uuidv4 } from 'uuid';
 
 

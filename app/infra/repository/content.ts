@@ -1,6 +1,6 @@
 import { arrayUnion, deleteDoc, doc, getDoc, runTransaction, setDoc, updateDoc } from "firebase/firestore";
 import { onTryFirebase } from "./helper"
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import { Content } from "../models/contents";
 
 //　クエリ系

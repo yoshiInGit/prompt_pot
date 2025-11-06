@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { createContent, deleteContent, renameContent, restoreContents } from "@/app/action_state/action/content";
 import ContentState from "@/app/action_state/state/content_state";
 import ConfirmDialog from "../_common/ConfirmDialog";
-import { Content } from "@/app/models/contents";
+import { Content } from "@/app/infra/models/contents";
 
 export default function HomePage() {
   const router = useRouter();

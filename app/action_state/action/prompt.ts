@@ -1,8 +1,8 @@
-import { groupResourcesByGenre, Resource, sortResourcesByGenre } from "@/app/models/resource";
+import { groupResourcesByGenre, Resource, sortResourcesByGenre } from "@/app/infra/models/resource";
 import PromptState from "../state/prompt_state";
-import { getAdditionalPromptIds, getBasePrompt, getResult, registerAdditionalPrompt, setBasePrompt, setResult, unregisterAdditionalPrompt } from "@/app/repository/prompt";
-import { getResourceById } from "@/app/repository/resources";
-import { invokeGemini25Flash } from "@/app/ai/firebaseLogicAi";
+import { getAdditionalPromptIds, getBasePrompt, getResult, registerAdditionalPrompt, setBasePrompt, setResult, unregisterAdditionalPrompt } from "@/app/infra/repository/prompt";
+import { getResourceById } from "@/app/infra/repository/resources";
+import { invokeGemini25Flash } from "@/app/infra/ai/firebaseLogicAi";
 import LoadingState from "../state/loading_state";
 import ResultState from "../state/result_state";
 import ContentState from "../state/content_state";

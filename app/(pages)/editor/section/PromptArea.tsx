@@ -2,7 +2,7 @@ import { GoCpu } from "react-icons/go";
 import AdditionalPromptCard from "../modules/AdditionalPromptCard";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { useState, useEffect } from "react";
-import { Resource } from "@/app/models/resource";
+import { Resource } from "@/app/infra/models/resource";
 import PromptState from "@/app/action_state/state/prompt_state";
 import { executePrompt, removePrompt, saveBasePrompt } from "@/app/action_state/action/prompt";
 import { IoIosSave } from "react-icons/io";

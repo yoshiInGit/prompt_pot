@@ -1,6 +1,6 @@
 import ResourceState from "@/app/action_state/state/resource_state";
-import { Folder, File } from "@/app/models/directory";
-import { Resource } from "@/app/models/resource";
+import { Folder, File } from "@/app/infra/models/directory";
+import { Resource } from "@/app/infra/models/resource";
 import { useEffect, useState } from "react";
 import { MdClass } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
