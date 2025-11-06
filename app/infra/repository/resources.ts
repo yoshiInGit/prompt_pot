@@ -1,13 +1,22 @@
+/*
+    リソース（フォルダ・ファイル）に関するリポジトリ
+    Firestoreでのリソースデータの取得・追加・更新・削除を行う
+    エラー処理は_onTryFirebaseでラップして行う
+*/
+
+
 import { arrayRemove, arrayUnion, deleteField, doc, DocumentData, getDoc, runTransaction, updateDoc} from "firebase/firestore";
 import { Folder, File } from "../models/directory";
 import {Resource, ResourceGenre, ResourceGenreType} from "../models/resource";
 import { db } from "../../firebase";
+import { onTryFirebase } from "./helper"
+
 
 //クエリ系
 const resourceCache : Map<string, Resource> = new Map();
 
 export const getFoldersByParentId = async (parentId: string): Promise<Folder[]> => {
-    return await _onTryFirebase(async () => {
+    return await onTryFirebase(async () => {
 
         const folderDocRef   = doc(db, "base", "resources", "folders", parentId);
         const resourceDocRef = doc(db, "base", "resources");
@@ -37,7 +46,7 @@ export const getFoldersByParentId = async (parentId: string): Promise<Folder[]> 
 }
 
 export const getFilesByParentId = async (parentId: string): Promise<File[]> => {
-    return await _onTryFirebase(async () => {
+    return await onTryFirebase(async () => {
 
         // フォルダIDを取得
         const folderDocRef   = doc(db, "base", "resources", "folders", parentId);
@@ -73,7 +82,7 @@ export const getResourceById = async ({id}:{id:string}) : Promise<Resource | nul
         return resourceCache.get(id) ?? null;
     }
 
-    return _onTryFirebase(async () => {
+    return onTryFirebase(async () => {
         const fileDocRef = doc(db, "base", "resources", "files", id);
         const fileSnapshot = await getDoc(fileDocRef);
         
@@ -103,7 +112,7 @@ export const getResourceById = async ({id}:{id:string}) : Promise<Resource | nul
 
 // コマンド系
 export const addResourceFolder = async ({folder, currentFolderId}:{folder: Folder, currentFolderId : string}): Promise<void> => {
-    await _onTryFirebase(async ()=>{
+    await onTryFirebase(async ()=>{
         await runTransaction(db, async (transaction) => {
             
             // /base/resources/folders に新しいフォルダ情報をセット
@@ -126,7 +135,7 @@ export const addResourceFolder = async ({folder, currentFolderId}:{folder: Folde
 };
 
 export const addResource = async ({file, currentFolderId}:{file:File, currentFolderId:string}) => {
-    await _onTryFirebase(async ()=>{
+    await onTryFirebase(async ()=>{
         await runTransaction(db, async (transaction) => {
             // /base/resources/file に新しいリソース情報をセット
             transaction.set(doc(db, "base", "resources", "files", file.id), {
@@ -160,7 +169,7 @@ export const addResource = async ({file, currentFolderId}:{file:File, currentFol
 }
 
 export const updateName = async ({folderId, name}:{folderId : string, name : string}) => {
-    await _onTryFirebase(async ()=>{
+    await onTryFirebase(async ()=>{
 
         const resourceDocRef = doc(db, "base", "resources");
         await updateDoc(resourceDocRef, {
@@ -171,7 +180,7 @@ export const updateName = async ({folderId, name}:{folderId : string, name : str
 }
 
 export const updateResource = async ({updatedResource}:{updatedResource: Resource}) => {
-    await _onTryFirebase(async () => {
+    await onTryFirebase(async () => {
         const resourceDocRef = doc(db, "base", "resources", "files", updatedResource.id);
         await updateDoc(resourceDocRef, {
             title:       updatedResource.title,
@@ -185,7 +194,7 @@ export const updateResource = async ({updatedResource}:{updatedResource: Resourc
 }
 
 export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) => {
-    await _onTryFirebase(async()=>{
+    await onTryFirebase(async()=>{
 
         const folderDocRef       = doc(db, "base", "resources", "folders", folderId);
         const parentFolderDocRef = doc(db, "base", "resources", "folders", parentFolderId);
@@ -209,7 +218,7 @@ export const deleteFolder = async ({folderId, parentFolderId}:{folderId:string, 
 }
 
 export const deleteResource = async ({fileId, parentFolderId}:{fileId:string, parentFolderId:string}) => {
-    await _onTryFirebase(async ()=>{
+    await onTryFirebase(async ()=>{
 
         const fileDocRef         = doc(db, "base", "resources", "files", fileId);
         const parentFolderDocRef = doc(db, "base", "resources", "folders", parentFolderId);
@@ -230,48 +239,4 @@ export const deleteResource = async ({fileId, parentFolderId}:{fileId:string, pa
             });
         });
     })
-}
-
-
-//　ヘルパー
-const _onTryFirebase =  async <T>(method: () => Promise<T>): Promise<T> => {
-    try {
-        return await method()
-    } catch (error) {
-
-        //TODO: エラーハンドリングを適切に行う
-        console.error("Firebaseの操作に失敗しました:", error);
-        // 必要に応じて throw する
-        throw new Error("Firebaseの操作に失敗しました");
-    }
-}
-
-const _getFileData = async (fileId: string): Promise<DocumentData | null> => {
-    const fileDocRef = doc(db, "base", "resources", "files", fileId);
-    const fileSnapshot = await getDoc(fileDocRef);
-    if (!fileSnapshot.exists()) {
-        console.error(`ファイルが見つかりません: ${fileId}`);
-        return null;
-    }
-    return fileSnapshot.data();
-}
-
-const _getFolderData = async (folderId: string): Promise<DocumentData | null> => {
-    const folderDocRef = doc(db, "base", "resources", "folders", folderId);
-    const folderSnapshot = await getDoc(folderDocRef);
-    if (!folderSnapshot.exists()) {
-        console.error(`フォルダが見つかりません: ${folderId}`);
-        return null;
-    }
-    return folderSnapshot.data();
-}
-
-const _getResourceData = async (): Promise<DocumentData | null> => {
-    const resourceDocRef = doc(db, "base", "resources");
-    const resourceSnapshot = await getDoc(resourceDocRef);
-    if (!resourceSnapshot.exists()) {
-        console.error("リソース情報が見つかりません");
-        return null;
-    }
-    return resourceSnapshot.data();
 }

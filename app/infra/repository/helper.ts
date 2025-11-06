@@ -1,3 +1,8 @@
+/*
+    Firebase操作時の共通ヘルパー
+*/
+
+// Firebase操作時のエラーハンドリングを行う共通関数
 export const onTryFirebase =  async <T>(method: () => Promise<T>): Promise<T> => {
     try {
         return await method()

@@ -1,3 +1,9 @@
+/*
+    プロンプトの実行や管理を行うアクション群。生成結果の管理も含む。
+    プロンプトの情報はコンテンツごとに管理されるため、コンテンツIDの情報を元に取得操作を行っている
+    プロンプトの状態はPromptStateに保存されている。実行ごとに取得しているわけではないので注意。
+*/
+
 import { groupResourcesByGenre, Resource, sortResourcesByGenre } from "@/app/infra/models/resource";
 import PromptState from "../state/prompt_state";
 import { getAdditionalPromptIds, getBasePrompt, getResult, registerAdditionalPrompt, setBasePrompt, setResult, unregisterAdditionalPrompt } from "@/app/infra/repository/prompt";
@@ -7,6 +13,9 @@ import LoadingState from "../state/loading_state";
 import ResultState from "../state/result_state";
 import ContentState from "../state/content_state";
 
+// プロンプトの実行を行う。
+// ベースプロンプトと追加プロンプトをもとに組み立ててAIに送信し、結果を取得する。
+// プロンプトはPromptStateから取得する。
 export const executePrompt = async ({basePrompt}:{basePrompt:string}) => {
 
     console.log("Executing prompt with base:", basePrompt);
@@ -43,17 +52,19 @@ export const executePrompt = async ({basePrompt}:{basePrompt:string}) => {
 
 }
 
+// プロンプトを実行する際に、ベースプロンプトと追加プロンプトを組み立てる関数
+// ジャンルごとにタグで囲むなどの処理を行う+マークダウン形式での出力指示を追加
 const _buildPrompt = (basePrompt: string, additionalPrompts: Resource[]): string => {    
     let prompt = "";
 
-    //　基本の命令を追加
+    //　基本の命令を追加。マークダウン形式での出力を指示
     prompt += "Execute the 'Base Prompt' but also follow the instructions specified in the 'Additional Conditions'."
     prompt += "Please output the result in **Markdown format** with the following guidelines:\n\n- Use **headings** (\\`#\\`, \\`##\\`, \\`###\\`) to organize sections clearly.\n- Use **bullet points** or **numbered lists** for step-by-step explanations or grouped items.\n- Apply **bold** or *italic* text to highlight important points.\n- Insert proper **line breaks** and spacing for better readability.\n- Use **code blocks** (\\`\\`\\`) when showing code or commands.\n- Add **blockquotes** (>) when emphasizing key notes or tips.\n\nMake sure the final output looks **structured, visually clear, and easy to read**.";
 
     // ベースプロンプトを追加
     prompt += "<Base Prompt>" + basePrompt + "</Base Prompt>";
 
-    // 追加のプロンプトを追加していく
+    // 追加プロンプトを追加していく
     const groupedResources = groupResourcesByGenre(additionalPrompts);
 
     prompt += "<Additional Condition>" 
@@ -75,6 +86,8 @@ const _buildPrompt = (basePrompt: string, additionalPrompts: Resource[]): string
 
 } 
 
+// コンテンツに紐づくプロンプト情報を復元するアクション
+// ベースプロンプト、追加プロンプト、結果をそれぞれ取得し、PromptStateおよびResultStateに保存する
 export const restorePrompts = async ({setBasePrompt, contentID}:{setBasePrompt:(prompt:string)=>void, contentID:string}) => {
     // 追加プロンプトのIDを取得
     // IDを取得
@@ -108,16 +121,15 @@ export const restorePrompts = async ({setBasePrompt, contentID}:{setBasePrompt:(
     promptState.notify();
 }   
 
-
+// 追加プロンプトを追加するアクション
+// 具体的にはリソースから指定したプロンプトをContentに紐づける
 export const addPrompt = async (resource : Resource) => {
-
-    // ステート更新
     const promptState = PromptState.getInstance();
     const contentState = ContentState.getInstance();
 
     const currentPrompts = promptState.additionalPrompts;
     if(currentPrompts.some(prompt => prompt.id === resource.id)) {
-        // 既に存在する場合は何もしない
+        // 既に存在するプロンプトを追加しようとする場合は何もしない
         return;
     }
 
@@ -129,12 +141,14 @@ export const addPrompt = async (resource : Resource) => {
     await registerAdditionalPrompt({resourceId : resource.id, contentId: contentState.editingContentId || ""});
 }
 
-export const removePrompt = async ({resourceId}:{resourceId:string}) => {
-    // ステート更新
-    const promptState = PromptState.getInstance();  
-    const currentPrompts = promptState.additionalPrompts;
-    const contentState = ContentState.getInstance();
 
+// 追加プロンプトを削除するアクション
+export const removePrompt = async ({resourceId}:{resourceId:string}) => {
+    const promptState = PromptState.getInstance();  
+    const contentState = ContentState.getInstance();
+    
+    const currentPrompts = promptState.additionalPrompts;
+    
     // 指定されたIDのプロンプトを削除
     promptState.additionalPrompts = currentPrompts.filter(prompt => prompt.id !== resourceId);
     promptState.notify();
@@ -143,13 +157,14 @@ export const removePrompt = async ({resourceId}:{resourceId:string}) => {
     await unregisterAdditionalPrompt({resourceId : resourceId, contentID: contentState.editingContentId || ""});
 }
 
+// ベースプロンプトをDBに保存するアクション
 export const saveBasePrompt = async ({prompt}: {prompt:string}) => {
-    // データベース更新
     const contentState = ContentState.getInstance();
 
     await setBasePrompt({contentId: contentState.editingContentId || "", prompt: prompt});
 }
 
+// 生成結果をMDファイルとしてダウンロードするアクション
 export const downloadResultMD = async () => {
     const resultState = ResultState.getInstance();
     const result = resultState.result;

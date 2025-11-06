@@ -1,5 +1,10 @@
+/*
+    プロンプトに関するリポジトリ
+    Firestoreでのプロンプトデータの取得・追加・更新を行う
+    エラー処理はonTryFirebaseでラップして行う
+*/
+
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
-import { Resource } from "../models/resource";
 import { onTryFirebase } from "./helper";
 import { db } from "../../firebase";
 
@@ -49,6 +54,7 @@ export const getResult = async ({contentId}:{contentId:string}): Promise<string>
 }
 
 //コマンド系
+// コンテンツに追加プロンプトを登録する
 export const registerAdditionalPrompt = async ({resourceId, contentId}: {resourceId : string, contentId:string}) => {
     onTryFirebase(async()=>{
         const promptDocRef   = doc(db, "base", "prompts", "file", contentId);
@@ -59,6 +65,7 @@ export const registerAdditionalPrompt = async ({resourceId, contentId}: {resourc
     })
 }
 
+// コンテンツから追加プロンプトを解除する
 export const unregisterAdditionalPrompt = async ({resourceId, contentID}:{resourceId:string, contentID:string}) => {
     onTryFirebase(async()=>{
         const promptDocRef   = doc(db, "base", "prompts", "file", contentID);

@@ -1,3 +1,12 @@
+/*
+    リソース（コンテンツに追加できるプロンプトのテンプレート）の管理を行うアクション群
+    リソースはフォルダとファイルで管理され、フォルダの中にファイルやさらにフォルダを入れ子にできる構造を持つ
+    フォルダ、ファイルはIDと名前のみを持つシンプルな構造であり、
+    ファイルごとに具体的なリソース情報と紐づいており、選択されたファイルIDをもとにリソース情報を取得する
+    リソースの状態はResourceStateに保存されている
+*/
+
+
 import { v4 as uuidv4 } from 'uuid';
 import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById, updateResource} from '@/app/infra/repository/resources';
 import { File, Folder } from '@/app/infra/models/directory';
@@ -6,13 +15,14 @@ import ResourceState from '../state/resource_state';
 import { Resource, ResourceGenre, ResourceGenreType, sortResourcesByGenre } from '@/app/infra/models/resource';
 import PromptState from '../state/prompt_state';
 
+// リソースの名前を変更するアクション
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
         // DB更新
         await updateName({folderId: resource, name: name});
 
-        // ステート更新
         const resourceState = ResourceState.getInstance();
+        
         const folderIndex = resourceState.folders.findIndex(folder => folder.id === resource);
         if (folderIndex !== -1) {
             resourceState.folders[folderIndex].name = name; // フォルダ名を更新
@@ -21,6 +31,8 @@ export const changeResourceName = async ({resourceId: resource, name}:{resourceI
     });
 }
 
+// サービス起動時にフォルダの内容を復元するアクション
+// 一番上の階層（ベースフォルダ）を開く
 export const restoreFolder = async () => {
     await _onResourceLoading(async ()=>{
         const folders = await getFoldersByParentId("base");
@@ -34,6 +46,7 @@ export const restoreFolder = async () => {
     })
 }
 
+// 指定したフォルダの情報を新規に開くアクション
 export const openFolder = async ({folderId}:{folderId:string}) => {
     const resourceState = ResourceState.getInstance();
 
@@ -53,6 +66,7 @@ export const openFolder = async ({folderId}:{folderId:string}) => {
     })
 }
 
+// フォルダを新規に追加するアクション
 export const addFolder = async ({currentFolderId, name}:{currentFolderId:string, name:string}) =>{
     await _onResourceLoading(async ()=>{
         const newFolder : Folder = {
@@ -73,6 +87,7 @@ export const addFolder = async ({currentFolderId, name}:{currentFolderId:string,
 
 }
 
+// フォルダを削除するアクション
 export const removeFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) =>{
     await _onResourceLoading(async()=>{
         //DB処理
@@ -85,6 +100,8 @@ export const removeFolder = async ({folderId, parentFolderId}:{folderId:string, 
     })
 }
 
+// ファイルを新規に追加するアクション
+// それに紐づくリソースも同時に作成する
 export const addFile = async({fileName, currentFolderId}:{fileName:string, currentFolderId:string}) =>{
     await _onResourceLoading(async()=>{
         const newFile : File = {
@@ -114,6 +131,7 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
     });
 }
 
+// ファイルを削除するアクション
 export const removeFile = async ({fileId, parentFolderId}:{fileId : string, parentFolderId:string}) =>{
     await _onResourceLoading(async ()=>{
         //DB処理
@@ -126,6 +144,7 @@ export const removeFile = async ({fileId, parentFolderId}:{fileId : string, pare
     })
 }
 
+// ファイルを選択状態にするアクション
 export const selectFile = async ({file}:{file:File}) => {
     const resource = await getResourceById({id : file.id});
 
@@ -135,6 +154,7 @@ export const selectFile = async ({file}:{file:File}) => {
     resourceState.notify();
 }
 
+// リソースを編集するアクション
 export const editResource = async ({id, title, genre, description, prompt }:{id:string, title: string; genre: ResourceGenre; description: string; prompt: string;}) => {
     const updatedResource =  new Resource({ 
         id: id,
@@ -166,6 +186,7 @@ export const editResource = async ({id, title, genre, description, prompt }:{id:
 
 
 // ヘルパー
+// リソース操作時の読み込み状態を実行する
 const _onResourceLoading = async(method:()=>Promise<void>) => {
     LoadingState.getInstance().isResourceListLoading = true;
     LoadingState.getInstance().notifyResourceListSub();
