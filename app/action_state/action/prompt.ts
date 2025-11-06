@@ -6,7 +6,7 @@
 
 import { groupResourcesByGenre, Resource, sortResourcesByGenre } from "@/app/infra/models/resource";
 import PromptState from "../state/prompt_state";
-import { getAdditionalPromptIds, getBasePrompt, getResult, registerAdditionalPrompt, setBasePrompt, setResult, unregisterAdditionalPrompt } from "@/app/infra/repository/prompt";
+import * as promptRepo from "@/app/infra/repository/prompt";
 import { getResourceById } from "@/app/infra/repository/resources";
 import { invokeGemini25Flash } from "@/app/infra/ai/firebaseLogicAi";
 import LoadingState from "../state/loading_state";
@@ -48,7 +48,7 @@ export const executePrompt = async ({basePrompt}:{basePrompt:string}) => {
     loadingState.notifyResultSub();
 
     // DBに結果を保存
-    await setResult({result: result, contentId: contentState.editingContentId || ""});
+    await promptRepo.setResult({result: result, contentId: contentState.editingContentId || ""});
 
 }
 
@@ -94,7 +94,7 @@ export const restorePrompts = async ({setBasePrompt, contentID}:{setBasePrompt:(
     const contentState = ContentState.getInstance();
     contentState.editingContentId = contentID;
 
-    const promptIds = await getAdditionalPromptIds({contentId: contentID});
+    const promptIds = await promptRepo.getAdditionalPromptIds({contentId: contentID});
 
     const resources: Resource[] = [];
     for(const id of promptIds){
@@ -105,11 +105,11 @@ export const restorePrompts = async ({setBasePrompt, contentID}:{setBasePrompt:(
     }
 
     // ベースプロンプトを設定
-    const basePrompt = await getBasePrompt({contentId: contentID});
+    const basePrompt = await promptRepo.getBasePrompt({contentId: contentID});
     setBasePrompt(basePrompt);
 
     // 結果を復元
-    const result = await getResult({contentId: contentID});
+    const result = await promptRepo.getResult({contentId: contentID});
     const resultState = ResultState.getInstance();
     resultState.result = result;
     resultState.notify();
@@ -138,7 +138,7 @@ export const addPrompt = async (resource : Resource) => {
     promptState.notify();
 
     // データベース更新
-    await registerAdditionalPrompt({resourceId : resource.id, contentId: contentState.editingContentId || ""});
+    await promptRepo.registerAdditionalPrompt({resourceId : resource.id, contentId: contentState.editingContentId || ""});
 }
 
 
@@ -154,14 +154,14 @@ export const removePrompt = async ({resourceId}:{resourceId:string}) => {
     promptState.notify();
 
     // データベース更新
-    await unregisterAdditionalPrompt({resourceId : resourceId, contentID: contentState.editingContentId || ""});
+    await promptRepo.unregisterAdditionalPrompt({resourceId : resourceId, contentID: contentState.editingContentId || ""});
 }
 
 // ベースプロンプトをDBに保存するアクション
 export const saveBasePrompt = async ({prompt}: {prompt:string}) => {
     const contentState = ContentState.getInstance();
 
-    await setBasePrompt({contentId: contentState.editingContentId || "", prompt: prompt});
+    await promptRepo.setBasePrompt({contentId: contentState.editingContentId || "", prompt: prompt});
 }
 
 // 生成結果をMDファイルとしてダウンロードするアクション

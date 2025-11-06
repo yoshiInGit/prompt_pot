@@ -8,7 +8,7 @@
 
 
 import { v4 as uuidv4 } from 'uuid';
-import { addResourceFolder, getFoldersByParentId, updateName, deleteFolder, addResource, getFilesByParentId, deleteResource, getResourceById, updateResource} from '@/app/infra/repository/resources';
+import * as resourceRepo from '@/app/infra/repository/resources';
 import { File, Folder } from '@/app/infra/models/directory';
 import LoadingState from '../state/loading_state';
 import ResourceState from '../state/resource_state';
@@ -19,7 +19,7 @@ import PromptState from '../state/prompt_state';
 export const changeResourceName = async ({resourceId: resource, name}:{resourceId : string, name : string}) =>{   
     await _onResourceLoading(async ()=>{
         // DB更新
-        await updateName({folderId: resource, name: name});
+        await resourceRepo.updateName({folderId: resource, name: name});
 
         const resourceState = ResourceState.getInstance();
         
@@ -35,8 +35,8 @@ export const changeResourceName = async ({resourceId: resource, name}:{resourceI
 // 一番上の階層（ベースフォルダ）を開く
 export const restoreFolder = async () => {
     await _onResourceLoading(async ()=>{
-        const folders = await getFoldersByParentId("base");
-        const files   = await getFilesByParentId("base"); 
+        const folders = await resourceRepo.getFoldersByParentId("base");
+        const files   = await resourceRepo.getFilesByParentId("base"); 
 
         const resourceState = ResourceState.getInstance();
         resourceState.currentFolderId = "base"; // フォルダを復元する場合は、現在のフォルダをベースフォルダに戻す
@@ -56,8 +56,8 @@ export const openFolder = async ({folderId}:{folderId:string}) => {
     resourceState.notify();
 
     await _onResourceLoading(async()=>{
-        const folders = await getFoldersByParentId(folderId);
-        const files   = await getFilesByParentId(folderId); 
+        const folders = await resourceRepo.getFoldersByParentId(folderId);
+        const files   = await resourceRepo.getFilesByParentId(folderId); 
 
         resourceState.currentFolderId = folderId; 
         resourceState.folders = folders;
@@ -75,7 +75,7 @@ export const addFolder = async ({currentFolderId, name}:{currentFolderId:string,
         };
 
         // データベース更新 
-        await addResourceFolder({folder: newFolder, currentFolderId: currentFolderId});
+        await resourceRepo.addResourceFolder({folder: newFolder, currentFolderId: currentFolderId});
 
         //　ステート更新
         const resourceState = ResourceState.getInstance();
@@ -91,7 +91,7 @@ export const addFolder = async ({currentFolderId, name}:{currentFolderId:string,
 export const removeFolder = async ({folderId, parentFolderId}:{folderId:string, parentFolderId:string}) =>{
     await _onResourceLoading(async()=>{
         //DB処理
-        await deleteFolder({folderId:folderId, parentFolderId:parentFolderId});
+        await resourceRepo.deleteFolder({folderId:folderId, parentFolderId:parentFolderId});
 
         //ステート更新
         const resourceState = ResourceState.getInstance();
@@ -118,7 +118,7 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
         });
 
         //DB処理
-        await addResource({file: newFile, currentFolderId: currentFolderId});
+        await resourceRepo.addResource({file: newFile, currentFolderId: currentFolderId});
 
         //ステート更新
         const resourceState = ResourceState.getInstance();
@@ -135,7 +135,7 @@ export const addFile = async({fileName, currentFolderId}:{fileName:string, curre
 export const removeFile = async ({fileId, parentFolderId}:{fileId : string, parentFolderId:string}) =>{
     await _onResourceLoading(async ()=>{
         //DB処理
-        await deleteResource({fileId:fileId, parentFolderId:parentFolderId});
+        await resourceRepo.deleteResource({fileId:fileId, parentFolderId:parentFolderId});
         
         //ステート更新
         const resourceState = ResourceState.getInstance();
@@ -146,7 +146,7 @@ export const removeFile = async ({fileId, parentFolderId}:{fileId : string, pare
 
 // ファイルを選択状態にするアクション
 export const selectFile = async ({file}:{file:File}) => {
-    const resource = await getResourceById({id : file.id});
+    const resource = await resourceRepo.getResourceById({id : file.id});
 
     const resourceState = ResourceState.getInstance();
     resourceState.selectedResource = resource;
@@ -165,7 +165,7 @@ export const editResource = async ({id, title, genre, description, prompt }:{id:
     });
 
     // DB更新
-    await updateResource({updatedResource: updatedResource});
+    await resourceRepo.updateResource({updatedResource: updatedResource});
 
     // ステート更新
     const resourceState = ResourceState.getInstance();
