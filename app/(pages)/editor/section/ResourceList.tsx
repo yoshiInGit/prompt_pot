@@ -1,8 +1,8 @@
 import { addFile, addFolder, changeResourceName, editResource, openFolder, removeFile, removeFolder, selectFile } from "@/app/action_state/action/resource";
 import LoadingState from "@/app/action_state/state/loading_state";
 import ResourceState from "@/app/action_state/state/resource_state";
-import { Folder, File } from "@/app/models/directory";
-import { Resource, ResourceGenre } from "@/app/models/resource";
+import { Folder, File } from "@/app/infra/models/directory";
+import { Resource, ResourceGenre } from "@/app/infra/models/resource";
 import { useEffect, useState } from "react";
 import { AiFillFileAdd, AiFillFolderAdd } from "react-icons/ai";
 import { BiSolidRename } from "react-icons/bi";

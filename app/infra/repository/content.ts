@@ -1,9 +1,16 @@
-import { arrayUnion, deleteDoc, doc, getDoc, runTransaction, setDoc, updateDoc } from "firebase/firestore";
+/*
+    コンテンツに関するリポジトリ
+    Firestoreでのコンテンツデータの取得・追加・更新・削除を行う
+    エラー処理はonTryFirebaseでラップして行う
+*/
+
+import { arrayUnion, doc, getDoc, runTransaction, updateDoc } from "firebase/firestore";
 import { onTryFirebase } from "./helper"
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import { Content } from "../models/contents";
 
 //　クエリ系
+// すべてのコンテンツを取得する
 export const getAllContents = async ():Promise<Content[]>=> {
     return await onTryFirebase(async () => {
         const docRef = doc(db, "base", "contents");
@@ -37,6 +44,7 @@ export const getAllContents = async ():Promise<Content[]>=> {
 }
 
 // コマンド系
+// 新しいコンテンツを追加する
 export const addContent = async ({content}:{content:Content}) => {
     onTryFirebase(async () => {
         const contentDocRef = doc(db, "base", "contents");
@@ -61,6 +69,7 @@ export const addContent = async ({content}:{content:Content}) => {
     });
 }
 
+// コンテンツを更新する
 export const updateContent = async ({content}:{content: Content}) => {
     onTryFirebase(async () => {
         const docRef = doc(db, "base", "contents");
@@ -91,6 +100,7 @@ export const updateContent = async ({content}:{content: Content}) => {
     });
 }
 
+// コンテンツを削除する
 export const deleteContent = async ({contentId}:{contentId:string}) => {
     onTryFirebase(async () => {
         const docRef = doc(db, "base", "contents");

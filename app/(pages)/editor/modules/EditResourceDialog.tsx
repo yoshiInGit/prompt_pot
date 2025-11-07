@@ -1,4 +1,4 @@
-import { Resource, ResourceGenre } from "@/app/models/resource";
+import { Resource, ResourceGenre } from "@/app/infra/models/resource";
 import React, { useEffect } from "react";
 
 interface ResourceDialogProps {

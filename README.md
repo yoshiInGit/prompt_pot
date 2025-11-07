@@ -100,6 +100,13 @@ AIを活用した業務のスピードと品質を飛躍的に高め、組織全
 
 
 ## 内部構成🔩
+### 採用しているアーキテクチャについて
+素早く開発できるよう、独自に調整したアーキテクチャを利用しています。
+詳しくは下記ブログから
+[https://zenn.dev/yoshi_in_zenn/articles/c35746404fb9b5](https://zenn.dev/yoshi_in_zenn/articles/c35746404fb9b5)
+
+
+
 ![システム構成図](./README_IMGS/sys.png)
 
 ### 🚀 技術スタック

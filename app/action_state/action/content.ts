@@ -1,11 +1,18 @@
-import { getAllContents, updateContent, deleteContent as repoDeleteContent } from "@/app/repository/content";
+/*
+    コンテンツ（各タスクの存在を定義するもの）を管理するアクション群
+    コンテンツ自体はIDと名前のみを持ち、各タスクの詳細な情報（所有しているプロンプトなど）は別途管理さているので注意。
+*/
+
+
+
+import * as contentRepo from "@/app/infra/repository/content";
 import ContentState from "../state/content_state";
 import LoadingState from "../state/loading_state";
-import { addContent} from "@/app/repository/content";
-import { Content } from "@/app/models/contents";
+import { addContent} from "@/app/infra/repository/content";
+import { Content } from "@/app/infra/models/contents";
 import { v4 as uuidv4 } from 'uuid';
 
-
+// サービス起動時にコンテンツの復元を行うためのアクション
 export const restoreContents = async () => {
     const loadingState = LoadingState.getInstance();
     const contentState = ContentState.getInstance();
@@ -13,7 +20,7 @@ export const restoreContents = async () => {
     loadingState.isContentLoading = true;
     loadingState.notifyContentSub();
 
-    const contents = await getAllContents();
+    const contents = await contentRepo.getAllContents();
     
     contentState.contents = contents;
     contentState.notify();
@@ -22,6 +29,7 @@ export const restoreContents = async () => {
     loadingState.notifyContentSub();
 } 
 
+// 新規にコンテンツを作成するアクション
 export const createContent = async ({name}:{name:string}) => {
     const loadingState = LoadingState.getInstance();
     const contentState = ContentState.getInstance();
@@ -43,6 +51,7 @@ export const createContent = async ({name}:{name:string}) => {
     loadingState.notifyContentSub();
 }
 
+// コンテンツの名前を変更するアクション
 export const renameContent = async ({contentId, name}:{contentId:string, name:string}) => {
     const loadingState = LoadingState.getInstance();
     const contentState = ContentState.getInstance();
@@ -51,7 +60,7 @@ export const renameContent = async ({contentId, name}:{contentId:string, name:st
     loadingState.notifyContentSub();
 
     // DBの更新
-    await updateContent({content: new Content({id: contentId, name: name})});
+    await contentRepo.updateContent({content: new Content({id: contentId, name: name})});
 
     // コンテンツの名前を更新
     const contentIndex = contentState.contents.findIndex(content => content.id === contentId);
@@ -68,6 +77,7 @@ export const renameContent = async ({contentId, name}:{contentId:string, name:st
     loadingState.notifyContentSub();
 }
 
+// コンテンツを削除するアクション
 export const deleteContent = async ({contentId}:{contentId:string}) => {
     const loadingState = LoadingState.getInstance();
     const contentState = ContentState.getInstance();
@@ -76,7 +86,7 @@ export const deleteContent = async ({contentId}:{contentId:string}) => {
     loadingState.notifyContentSub();
 
     // DBから削除
-    await repoDeleteContent({contentId: contentId});
+    await contentRepo.deleteContent({contentId: contentId});
 
     // ステートから削除
     const contentIndex = contentState.contents.findIndex(content => content.id === contentId);

@@ -1,3 +1,11 @@
+/*
+    リソースのモデルを定義する
+    リソースとは、タスクごとに利用可能なプロンプトのテンプレートなどを指す
+    それぞれジャンル分けがされており、ジャンルごとに色分けなどがされる
+*/
+
+
+// リソースのジャンルタイプ定義
 export enum ResourceGenreType {
     INSTRUCTION = "instruction",
     CONTEXT     = "context",
@@ -6,6 +14,8 @@ export enum ResourceGenreType {
     OTHER       = "other"
 }
 
+// リソースのジャンルモデル
+// ジャンルタイプに応じた名称や色を取得するメソッドを持つ
 export class ResourceGenre {
     genre : ResourceGenreType = ResourceGenreType.OTHER;
 
@@ -45,6 +55,8 @@ export class ResourceGenre {
 }
 
 
+// リソースモデル
+// 各リソースの基本的な情報を保持する
 export class Resource  {
     id: string
     title : string
@@ -72,8 +84,8 @@ export class Resource  {
 }
 
 
-// メソッド
-
+// リソース固有のメソッド
+// ジャンルごとにソートやグループ化を行う
 export const sortResourcesByGenre = (resources: Resource[]): Resource[] => {
     const genreOrder = [
         ResourceGenreType.INSTRUCTION,
