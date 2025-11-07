@@ -128,7 +128,9 @@ export const addPrompt = async (resource : Resource) => {
     const contentState = ContentState.getInstance();
 
     const currentPrompts = promptState.additionalPrompts;
+    
     if(currentPrompts.some(prompt => prompt.id === resource.id)) {
+        console.log("Prompt already exists, not adding.");
         // 既に存在するプロンプトを追加しようとする場合は何もしない
         return;
     }
